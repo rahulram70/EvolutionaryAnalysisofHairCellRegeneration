@@ -1,0 +1,24 @@
+
+# Procomp Change Log
+All notable changes to this project will be documented in this file.
+The format is based on [Keep a Changelog](http://keepachangelog.com/)
+
+
+## [Unreleased]
+### Added
+- protein comparison analysis
+- functional domain analysis
+- multiple sequence alignment functionality
+- protein combinations for species gene overlap with zebrafish
+- added documention.
+
+### Changed
+- Start versioning based on the current version at 0.1.0 for organization.
+- moved implementation to example scripts in example folder.
+
+## [0.1.0] - 2017-05-25
+### Added
+- example 3 (title...)
+
+### Fixed
+- (...)
