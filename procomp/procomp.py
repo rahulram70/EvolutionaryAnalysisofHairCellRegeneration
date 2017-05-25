@@ -230,6 +230,7 @@ def MainPC_analysis(hitstxt, outtxt):
         as specified by user
     USE of FUNCTION:
     MainProteinCompare ==> MainPC_analysis ==> textfile
+    MainProteinCompare ==> MainPC_analysis ==> markdown
     """
 
     data = open(hitstxt, "r")
