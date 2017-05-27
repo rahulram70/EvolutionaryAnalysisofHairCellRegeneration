@@ -227,7 +227,7 @@ def MainPC_analysis(hitstxt, outtxt):
     DATE_Started: Jan 6 2017
     OVERVIEW:
         this function analyzes the output(txt file) from mainproteincompare
-        as specified by user
+        as specified by user.
     USE of FUNCTION:
     MainProteinCompare ==> MainPC_analysis ==> textfile
     MainProteinCompare ==> MainPC_analysis ==> markdown
@@ -248,7 +248,7 @@ def MainPC_analysis(hitstxt, outtxt):
         perc = round(int(item[5][1:]) /int(item[3][7:]), 3)
 
         # this is what gets printed to the output file
-        outL.append( str("\n" +str(perc) + " = "+ item[5][1:]+"/" +item[3][7:]+ " "+ item[1][5:] +\
+        outL.append( str("\n" +str(perc) + " = " + item[5][1:] + "/" + item[3][7:]+ " " + item[1][5:] +\
                          " " + "".join(item[6:8]) + " " + "".join(item[8:])   ))
     outL.sort()
     outL.reverse()
