@@ -69,6 +69,7 @@ def row_rm_by_dup (f_in, col, f_out=""):
     if (f_out == ""):
         f_out = f_in
     df  = pd.read_csv(f_in) 
+    initLen = df.shape[0]
 
     # 1. sort dataframe by selected column
     df.sort_values(col, inplace=True)
@@ -81,5 +82,7 @@ def row_rm_by_dup (f_in, col, f_out=""):
     df = df.drop("index", axis=1)
 
     # 4. convert dataframe to csv output file
+    print("rows now: {}, rows starting: {}".format(df.shape[0], initLen))
+    print("{} rows removed".format( (int(initLen) - int(df.shape[0])) ))
     df.to_csv(f_out)
 
