@@ -9,5 +9,5 @@ behind the project progression.
         - From there input 500 gene id’s at a time into ensembl biomart to get associated transcript id’s
     - From Steiner paper Dataset S4 was used in entirety
     - Merged two transcript id lists
-        - Robby removed duplicates
+        - Robby removed duplicates (12709 starting to 11341 left, 1368 columns removed)
 
