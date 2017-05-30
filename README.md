@@ -2,25 +2,25 @@
 <hr>
 
 ### What is it?
-    Procomp is a set of tools built in python 3 which can be used
-    to analyze aligned seqeunces for user defined targets. The 
-    project excels at problems with proteins across multiple species
-    where contrast between two groups of the species is desired. 
-    Procomp also draws on other tools already present for alignments,
-    allowing for automation of multiple sequence alignments with 
-    tools from biopython, as well as protein comparison within functional
-    domain analysis.
+Procomp is a set of tools built in python 3 which can be used
+to analyze aligned seqeunces for user defined targets. The 
+project excels at problems with proteins across multiple species
+where contrast between two groups of the species is desired. 
+Procomp also draws on other tools already present for alignments,
+allowing for automation of multiple sequence alignments with 
+tools from biopython, as well as protein comparison within functional
+domain analysis.
 
 ### The Latest Version
-    Details on the version of the software can be viewed on the 
-    github repo under /documention/changelog.txt
-    (https://github.com/HarmonicHemispheres/procomp/docs)
+Details on the version of the software can be viewed on the 
+github repo under /documention/changelog.txt
+(https://github.com/HarmonicHemispheres/procomp/docs)
 
 ### Documentation
-    All indepth documentation for this project is located in
-    the github repo under documentation. In addition to documentation
-    examples of various uses of procomp can be found in the examples
-    folder on github. (...)
+All indepth documentation for this project is located in
+the github repo under documentation. In addition to documentation
+examples of various uses of procomp can be found in the examples
+folder on github. (...)
 
 
 ### Installation
