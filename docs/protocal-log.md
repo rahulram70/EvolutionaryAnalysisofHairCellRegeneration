@@ -10,6 +10,6 @@ behind the project progression.
     - From Steiner paper Dataset S4 was used in entirety
     - Merged two transcript id lists
         - Robby removed duplicates
-            - starting rows 12709 ---to--- 11341 rows left
-            - 1368 columns removed
+            - starting rows 12712 ---to--- 11340 rows left 
+            - 1372 rows removed
 
