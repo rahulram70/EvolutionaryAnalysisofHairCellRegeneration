@@ -16,7 +16,7 @@ import os
 from os import listdir
 from os.path import isfile, join
 
-def row_rm_by_col_cond (f_in, col, cond, f_out=""):
+def row_rm_by_col_cond (f_in, col, f_out=""):
     """
     Removes rows from a dataset by the condition specified
     in given column.
@@ -28,36 +28,58 @@ def row_rm_by_col_cond (f_in, col, cond, f_out=""):
                removed.
     Outputs:
         modified csv will output to a new file called 'X-out.csv'
+        unless no output file is specified, then output is written
+        to the input file.
     """
 
     if (f_out == ""):
         f_out = f_in
 
-    df = pd.read_csv(f_in)
-    #print(df)
-    col = df.columns.get_loc(col)
+    df  = pd.read_csv(f_in)
+    col = df.columns.get_loc(col)    
+    L   = []
     
-    L = []
-    
-    print("1. starting")
+    # 1. make a list of which rows to drop
     for index, row in df.iterrows():
         val = df.iloc[index, col]
         val = val.split(",")
         if ('0' in val):
             L.append(index)
 
-    print("2. removing {} elements".format(len(L)))
+    # 2. removing elements from L 
     df = df.drop(L)
-    
-    #i = 0
-    #while i < len(L):
-        #print(df.index[L[i]])
-    #    )        
-    #    i += 1
 
-    print("3. converting {}".format(df.shape))
-    
+    # 3. convert dataframe to csv output file
     df.to_csv(f_out)
-    return 0
 
-    
+def row_rm_by_dup (f_in, col, f_out=""):
+    """
+    Removes rows from data frame that contain duplicate values
+    in a particular column.
+    INPUTS:
+        f_in    = csv file path
+        col     = title of the column to be checked
+        f_out   = csv file path to write results to.
+    OUTPUT:
+        modified csv will output to a new file called 'X-out.csv'
+        unless no output file is specified, then output is written
+        to the input file.
+    """
+     
+    if (f_out == ""):
+        f_out = f_in
+    df  = pd.read_csv(f_in) 
+
+    # 1. sort dataframe by selected column
+    df.sort_values(col, inplace=True)
+
+    # 2. remove elements from L
+    df = df.drop_duplicates()
+
+    # 3. reindex list since values have been removed
+    df = df.reset_index()
+    df = df.drop("index", axis=1)
+
+    # 4. convert dataframe to csv output file
+    df.to_csv(f_out)
+
