@@ -35,7 +35,7 @@ To use this software, the easiest method follows:
 3. The module and its functions can now be used by calling:
 
     import procomp 
-    (or easier)
+    (or easier),
     import procomp as pc
 
 for further information refer to the official github repo
@@ -45,8 +45,8 @@ for further information refer to the official github repo
 ### Contacts
 <strong>Principle Investigator:</strong> Phil Uribe      <uribe@vetmed.wsu.edu>
 
-<strong>Senior Advisor</strong> Allison Coffin     <allison.coffin@wsu.edu>
+<strong>Senior Advisor:</strong> Allison Coffin     <allison.coffin@wsu.edu>
 
-<strong>Lead developper:</strong> Robby Boney     <robby.boney@wsu.edu>
+<strong>Developer:</strong> Robby Boney     <robby.boney@wsu.edu>
 
                     
