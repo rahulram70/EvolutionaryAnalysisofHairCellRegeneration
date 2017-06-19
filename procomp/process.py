@@ -18,18 +18,18 @@ from os.path import isfile, join
 
 def row_rm_by_col_cond (f_in, col, f_out=""):
     """
-    Removes rows from a dataset by the condition specified
-    in given column.
-    
-    Inputs:
-        f    = csv file path
-        col  = title of the column to be checked
-        cond = condition required for the row to be 
-               removed.
-    Outputs:
-        modified csv will output to a new file called 'X-out.csv'
-        unless no output file is specified, then output is written
-        to the input file.
+        Removes rows from a dataset by the condition specified
+        in given column.
+        
+        Inputs:
+            f    = csv file path
+            col  = title of the column to be checked
+            cond = condition required for the row to be 
+                   removed.
+        Outputs:
+            modified csv will output to a new file called 'X-out.csv'
+            unless no output file is specified, then output is written
+            to the input file.
     """
 
     if (f_out == ""):
@@ -76,7 +76,7 @@ def row_rm_by_dup (f_in, col, f_out=""):
 
     # 2. remove elements from L
     df = df.drop_duplicates()
-
+ 
     # 3. reindex list since values have been removed
     df = df.reset_index()
     df = df.drop("index", axis=1)
@@ -85,4 +85,34 @@ def row_rm_by_dup (f_in, col, f_out=""):
     print("rows now: {}, rows starting: {}".format(df.shape[0], initLen))
     print("{} rows removed".format( (int(initLen) - int(df.shape[0])) ))
     df.to_csv(f_out)
+
+def merge_folder_to_file(fd_in, f_out, save=1):
+    """
+    Compile a folder of text files into a single text file.
+    INPUTS:
+        fd_in   = folder of text files
+        f_out   = file to compile files to
+        save    = option to save old text files
+    OUTPUTS:
+        f_out   = ideally put the output file outside the folder
+                  being compiled from.
+    """
+
+    L = []
+    for file in os.listdir(fd_in):
+        if file.endswith(".txt"):
+            path = fd_in + file
+            val = open(path, "r").read()
+            L.append(val)
+
+    with open(f_out, "w+") as out:
+        for i in L:
+            out.write(i + '\n')
+
+
+
+
+
+
+
 

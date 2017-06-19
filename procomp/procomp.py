@@ -87,7 +87,6 @@ def RemoveSameGene(file):
 
         elif (float(L[0]) > tophit):
             tophit = float(L[0])
-
     return 0
 
 def stats(f):
@@ -866,15 +865,18 @@ def DomainHits_analysis(dm_output_file):
 
 def SortDuplicates(listGP, names):
     """
-    re-sort the list input arranging the non-zebrafish proteins together, accounting for when zebrafish proteins and genes
-    are duplicates.
+    OVERVIEW
+        re-sort the list input arranging the non-zebrafish proteins together,
+        accounting for when zebrafish proteins and genes are duplicates.
 
-    list = list of ( DAR gene - Species pro ID)
-    names = list of ordered species id's
+    INPUTS
+        list = list of ( DAR gene - Species pro ID)
+        names = list of ordered species id's
 
-    DARG DARP species proteins......
-
+    NOTES
+        DARG DARP species proteins......
     """
+    
     spacer = "                  "
     dataCol = []
     curgene = ""
@@ -901,7 +903,7 @@ def SortDuplicates(listGP, names):
 
     for i in dataCol:
         for nme in names:
-            if ''.join(i).find(nme) == -1: #str(i[0].split()[0] +   len(i) < 24 and
+            if ''.join(i).find(nme) == -1:
                 if "DARG" in ''.join(i):
                     i.append(nme + "           ")
                 else:
@@ -982,7 +984,7 @@ def combGeneCompile(combfile, unalignedfiles, outputFolder):
     OVERVIEW: this function takes a .txt file for combinations from CombinOfProID and makes a new .txt
      containing the associated unaligned protein sequences of that combination
     USE of FUNCTIONS:
-        SortDuplicates => CombinOfProID => ( combGeneComile ) => bioMuscleAlign => proteinCompare
+        SortDuplicates => CombinOfProID => ( combGeneCompile ) => bioMuscleAlign => proteinCompare
 
     NOTES:
         # iterate through all combinations
