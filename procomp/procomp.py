@@ -718,6 +718,7 @@ def comb_rm_dups(tr_pr_L, names):
         names   = list of ordered speices
     """
     spacer = "                  "
+    spacer_cnt = 14
     dataCol = []
     curgene = ""
     masterLForG = []
@@ -746,9 +747,9 @@ def comb_rm_dups(tr_pr_L, names):
         for nme in names:
             if ''.join(i).find(nme) == -1:
                 if "DART" in ''.join(i):
-                    i.append(nme + "           ")
+                    i.append(nme + " "*spacer_cnt)
                 else:
-                    i.append(nme +     "-----------")
+                    i.append(nme +     "-"*spacer_cnt)
 
         i[1:] = sorted(i[1:])
     return dataCol
