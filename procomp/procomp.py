@@ -17,19 +17,15 @@ from Bio import AlignIO
 # Utility Functions //////////////////////////////////////////////
 # ////////////////////////////////////////////////////////////////
     
-def TextToString(dir):
-    """
-    Takes a file path and outputs the described file as string
-    """
-
-    fo = open(dir, 'r')
-    output = fo.read()
-    return output
+def TextToString(path):
+    """ Takes a file path and outputs the described file as string """
+    return open(path, 'r').read()
 
 def SortProtein(alignmentfile, outputfile, orderCmdList):
     """
-    OVERVIEW: This function will take a protein sequence and then reorders it based on the order of
-    the list (orderCmdList)
+    OVERVIEW:  
+        This function will take a protein sequence and
+        then reorders it based on the order of the list (orderCmdList)
     USE of FUNCTION:
         alignment file ==> sortProtein ==> outputfile
     """
@@ -91,11 +87,11 @@ def RemoveSameGene(file):
 
 def stats(f):
     """
-    SUMMARY:
-    stats, is a decorator function for timing other functions
+    OVERVIEW:
+        stats, is a decorator function for timing other functions
     NOTES:
-    this decorator function has one package dependancy
-    - time
+        this decorator function has one package dependancy
+        - time
     """
     def caller(*args, **kwds):
         t0 = time.time()

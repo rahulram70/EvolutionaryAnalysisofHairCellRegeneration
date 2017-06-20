@@ -1,9 +1,27 @@
-
+#!/usr/bin/env python2
 """
 OVERVIEW
     functions in this module are focussed on query of ensembl
     using the pycogent module to access the ensembl mysql database.
 """
+
+def ensembl_login():
+    """ Neccesary to log into the ensembl database """
+    import os
+    from cogent.db.ensembl import HostAccount
+    if 'ENSEMBL_ACCOUNT' in os.environ:
+        host, username, password = os.environ['ENSEMBL_ACCOUNT'].split()
+        account = HostAccount(host, username, password)
+    else:
+        account = None
+
+def print_species():
+
+    ensembl_login()
+
+    from cogent.db.ensembl import Species
+    print(Species)
+    return 0
 
 def tr_to_pr(sp, tr):
     """
@@ -17,3 +35,7 @@ def tr_to_pr(sp, tr):
     """
 
     return 0
+
+
+print_species()
+
