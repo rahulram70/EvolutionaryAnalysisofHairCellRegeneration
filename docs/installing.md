@@ -4,8 +4,8 @@
 
 - [Dependancies](#Dependancies)
 - [Setting Up](#setting-up)
-    1. [Downloading the Project](#1-Downloading-the-project-from-github-to-a-desired-folder)
-    2. [Adding the project directory to PATH](#2-adding-the-project-directory-to-PATH)
+    1. [Downloading the Project](#1-downloading-the-project-from-github-to-a-desired-folder)
+    2. [Adding the project directory to PATH](#2-adding-the-project-directory-to-path)
     3. [Basics of Using Procomp](#3-basics-of-using-procomp)
 
 <hr>
