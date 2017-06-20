@@ -684,9 +684,134 @@ def DataList(dir, idList):
     # if the gene is not in geneListSearched
     return True
 
+def comb_TrPr(id_dir, spgr):
+    """
+    OVERVIEW
+        combines a folder of transcript -- protein associations
+        into a long list.
+    INPUTS
+        alignments_dir = path to folder with alignments
+        spgr           = string for species id to look for (i.e. "DARP")
+    """
+    tr_pr_L = []
+    for file in os.listdir(id_dir):
+        
+        if file.endswith(".txt"):
+            fileloc = id_dir + file
+            fileName = "" + file
+            fileString = open(fileloc, "r").read()
+            fileString_split = fileString.splitlines()
+            
+            for line in fileString_split:
+                ln = line.split()
+                if len(ln) == 2:
+                    tr_pr_L.append(str(ln[0] + "   " + ln[1]))
+    return tr_pr_L
+
+def comb_rm_dups(tr_pr_L, names):
+    """
+    OVERVIEW
+        re-sorts the list (tr_pr_L) and removes duplicate entries
+    INPUTS
+        tr_pr_L = list of ( transcipts - protein id's) 
+                  from comb_TrPr()
+        names   = list of ordered speices
+    """
+    spacer = "                  "
+    dataCol = []
+    curgene = ""
+    masterLForG = []
+    testString = ""
+
+    for i in tr_pr_L:
+        if curgene != i.split()[0]:
+            curgene = i.split()[0]
+            for msti in masterLForG:
+                dataCol.append(list(msti))
+            masterLForG.clear()
+            masterLForG.append(list())
+        for row in masterLForG:
+            if len(row) == 0 and masterLForG.index(row) == 0:
+                row.append(curgene)
+            elif len(row) == 0 and masterLForG.index(row) != 0:
+                row.append(spacer)
+            if i.split()[1][:7] in testString.join(row) and masterLForG.index(row) == len(masterLForG)-1:
+                masterLForG.append(list())
+            elif i.split()[1][:7] not in testString.join(row):
+                row.append(i.split()[1])
+                break
+
+    for i in dataCol:
+        print(i)
+        for nme in names:
+            if ''.join(i).find(nme) == -1:
+                if "DART" in ''.join(i):
+                    i.append(nme + "           ")
+                else:
+                    i.append(nme +     "-----------")
+
+        i[1:] = sorted(i[1:])
+    return dataCol
+
+def comb_gen_combs(mstrList, out_fl):
+    """
+    OVERVIEW
+        This Function prints out the combinations of the output from SortDuplicates.
+        using data not outputed from sortedduplicates will most likely not return valid
+        output.
+    INPUTS
+        mstrList = List object from comb_rm_dups() output
+    """
+
+    out_fl = open(out_fl, "w")
+    reg = mstrList[0][0]
+    mstL = []
+    tmpL = []
+    for i in mstrList:
+        if "DART" in i[0] and i[0] != reg :
+            reg = i[0]
+            mstL.append(list(tmpL))
+            tmpL.clear()
+        tmpL.append(i[1:])
+        if "DART" in i[0] and mstrList.index(i) == len(mstrList)-1:
+            reg = i[0]
+            mstL.append(list(tmpL))
+            tmpL.clear()
+            
+    startN = 0
+    n = 0
+    for num in range(0,len(mstL)):
+
+        new_egg = zip(*mstL[num])
+        new_egg = ([x for x in tup if "-" not in x] for tup in new_egg)
+        combb = 1
+        for i in new_egg:
+            if len(i) != 0:
+                combb *= len(i)
+        print(mstrList[n][0], "  combs: " , combb)
+
+        new_egg = zip(*mstL[num])
+        new_egg = ([x for x in tup if "-" not in x] for tup in new_egg)
+        combsCount = []
+        each = [[]]
+        print(str(mstrList[n][0]  + "  combs: " + str(combb) + "\n"))
+        #out_fl.write(str(mstrList[n][0]  + "  combs: " + str(combb) + "\n"))
+        n += 1
+        while n < len(mstrList) and "DART" not in mstrList[n][0]:
+            n += 1
+
+        for l in new_egg:
+            neach = [x + [t] for t in l for x in each]
+            each = neach
+        for e in each:
+            print(str(str(each.index(e)) + "   " + str(e) + "\n"))
+            #out_fl.write(str(str(each.index(e)) + "   " + str(e) + "\n"))
+    out_fl.close()
+    return True
+
 def DomainHits_GeneProtein(alignments_dir, SPID):
     """
-    OVERVIEW: This function aquires the proteinID that associates with its GeneID
+    OVERVIEW: Aquires the proteinID that associates with its GeneID
 
     USE of FUNC:
         alignments_dir ===> path to folder with alignments
@@ -866,17 +991,17 @@ def DomainHits_analysis(dm_output_file):
 def SortDuplicates(listGP, names):
     """
     OVERVIEW
-        re-sort the list input arranging the non-zebrafish proteins together,
+        re-sorts the list input arranging the non-zebrafish proteins together,
         accounting for when zebrafish proteins and genes are duplicates.
 
     INPUTS
-        list = list of ( DAR gene - Species pro ID)
-        names = list of ordered species id's
+        listGP = list of ( DAR gene - Species pro ID) from DomainHits_GeneProtein()
+        names  = list of ordered species id's
 
     NOTES
         DARG DARP species proteins......
     """
-    
+
     spacer = "                  "
     dataCol = []
     curgene = ""
