@@ -4,6 +4,9 @@
 
 - [Dependancies](#Dependancies)
 - [Setting Up](#setting-up)
+    1. [Downloading the Project](#1.-Downloading-the-project-from-github-to-a-desired-folder)
+    2. [Adding the project directory to PATH](#2.-adding-the-project-directory-to-PATH)
+    3. [Basics of Using Procomp](#3.-basics-of-using-procomp)
 
 <hr>
 
@@ -25,17 +28,17 @@ all packages used are available to install using pip (a common python package in
 
 <hr>
 
-<h2> Setting Up </h2>
+## Setting Up
 
 To use procomp at the base level of setup involves: 
 
-<h4>1. Downloading the project from github to a desired folder</h4>
+#### 1. Downloading the project from github to a desired folder
     
 ```bash
 $ cd "path-to-folder"
 $ git clone "link-to-repo"
 ```
-<h4>2. Adding the project directory to PATH.</h4>
+#### 2. Adding the project directory to PATH
     
 To do this locate what shell you are using
 ```bash
@@ -46,7 +49,7 @@ Then add the following lines to the rc file for that shell. (i.e. the .bashrc fi
 export PYTHONPATH=$PYTHONPATH:/path/to/procomp
 ```
     
-<h4>3. Using Procomp</h4>
+#### 3. Basics of Using Procomp
 To Use procomp with the previous steps completed simply write scripts in a similar way to those provided in the examples folder. Our method for importing procomp follows the convention:
 
 ```python
