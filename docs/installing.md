@@ -1,13 +1,13 @@
-<h1> How to Use this Project </h1>
+# How to Use this Project
 
-<h2> Contents </h2>
+## Contents 
 
 - [Dependancies](#Dependancies)
 - [Setting Up](#setting-up)
 
 <hr>
 
-<h2> Dependancies </h2>
+## Dependancies
 
 In order to use this project a list of dependancies will first need to be installed or setup. This also depends on what you plan to use the project for. Procomp can be broken down into the following categories with their associated dependancies:
 
@@ -25,7 +25,7 @@ all packages used are available to install using pip (a common python package in
 
 <hr>
 
-<h2> Setting Up </h2>
+## Setting Up
 
 To use procomp at the base level of setup involves: 
 
