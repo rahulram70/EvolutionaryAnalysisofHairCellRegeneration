@@ -701,7 +701,14 @@ def comb_TrPr(id_dir, spgr):
             for line in fileString_split:
                 ln = line.split()
                 if len(ln) == 2:
-                    tr_pr_L.append(str(ln[0] + "   " + ln[1]))
+                    if (len(ln[1]) != 18):
+                        n = 18-len(ln[1]) 
+                        t = str(ln[1]) + "   "
+                        
+                    else:
+                        t = ln[1]
+                    tr_pr_L.append(str(ln[0] + "   " + t))
+    print("comb_TrPr() has finished")
     return tr_pr_L
 
 def comb_rm_dups(tr_pr_L, names):
@@ -714,7 +721,7 @@ def comb_rm_dups(tr_pr_L, names):
         names   = list of ordered speices
     """
     spacer = "                  "
-    spacer_cnt = 14
+    spacer_cnt = 11
     dataCol = []
     curgene = ""
     masterLForG = []
@@ -728,29 +735,34 @@ def comb_rm_dups(tr_pr_L, names):
             masterLForG.clear()
             masterLForG.append(list())
         for row in masterLForG:
+            
             if len(row) == 0 and masterLForG.index(row) == 0:
                 row.append(curgene)
             elif len(row) == 0 and masterLForG.index(row) != 0:
                 row.append(spacer)
+
             if i.split()[1][:7] in testString.join(row) and masterLForG.index(row) == len(masterLForG)-1:
                 masterLForG.append(list())
             elif i.split()[1][:7] not in testString.join(row):
                 row.append(i.split()[1])
                 break
 
+    # add in spacers if certain speices dont show up in 
+    # previous processing.
     for i in dataCol:
-        print(i)
         for nme in names:
             if ''.join(i).find(nme) == -1:
                 if "DART" in ''.join(i):
                     i.append(nme + " "*spacer_cnt)
                 else:
-                    i.append(nme +     "-"*spacer_cnt)
+                    i.append(nme + "-"*spacer_cnt)
 
         i[1:] = sorted(i[1:])
+
+    print("comb_rm_dups() has finished")
     return dataCol
 
-def comb_gen_combs(mstrList, out_fl):
+def comb_gen_combs(mstrList, out_fl, thr):
     """
     OVERVIEW
         This Function prints out the combinations of the output from SortDuplicates.
@@ -758,6 +770,7 @@ def comb_gen_combs(mstrList, out_fl):
         output.
     INPUTS
         mstrList = List object from comb_rm_dups() output
+        thr = threshold for how many combinations of each speices is tolerated.
     """
 
     out_fl = open(out_fl, "w")
@@ -782,17 +795,23 @@ def comb_gen_combs(mstrList, out_fl):
         new_egg = zip(*mstL[num])
         new_egg = ([x for x in tup if "-" not in x] for tup in new_egg)
         combb = 1
+        
         for i in new_egg:
+            
             if len(i) != 0:
                 combb *= len(i)
+        if (combb > 10):
+            # eliminate species with too many combinations
+            pass
+            
         print(mstrList[n][0], "  combs: " , combb)
-
+        n += 1
+        """
         new_egg = zip(*mstL[num])
         new_egg = ([x for x in tup if "-" not in x] for tup in new_egg)
         combsCount = []
         each = [[]]
-        print(str(mstrList[n][0]  + "  combs: " + str(combb) + "\n"))
-        #out_fl.write(str(mstrList[n][0]  + "  combs: " + str(combb) + "\n"))
+        out_fl.write(str(mstrList[n][0]  + "  combs: " + str(combb) + "\n"))
         n += 1
         while n < len(mstrList) and "DART" not in mstrList[n][0]:
             n += 1
@@ -801,8 +820,8 @@ def comb_gen_combs(mstrList, out_fl):
             neach = [x + [t] for t in l for x in each]
             each = neach
         for e in each:
-            print(str(str(each.index(e)) + "   " + str(e) + "\n"))
-            #out_fl.write(str(str(each.index(e)) + "   " + str(e) + "\n"))
+            out_fl.write(str(str(each.index(e)) + "   " + str(e) + "\n"))
+        """
     out_fl.close()
     return True
 
