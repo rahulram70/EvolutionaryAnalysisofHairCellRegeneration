@@ -762,7 +762,7 @@ def comb_rm_dups(tr_pr_L, names):
     print("comb_rm_dups() has finished")
     return dataCol
 
-def comb_gen_combs(mstrList, out_fl, thr):
+def comb_gen_combs(mstrList, out_fl, thr_tr):
     """
     OVERVIEW
         This Function prints out the combinations of the output from SortDuplicates.
@@ -770,10 +770,19 @@ def comb_gen_combs(mstrList, out_fl, thr):
         output.
     INPUTS
         mstrList = List object from comb_rm_dups() output
-        thr = threshold for how many combinations of each speices is tolerated.
+        out_fl = file where output will be written to
+        thr_tr = threshold for how many combinations each transcript can have.
+        thr_sp = threshold for how many combinations each species can have.
     """
+    def longest(L):
+        """ L is list of lists """
+        longest = len(L[0])
+        for i in L:
+            if len(i) > longest:
+                longest = len(i)
+        return longest
 
-    out_fl = open(out_fl, "w")
+    
     reg = mstrList[0][0]
     mstL = []
     tmpL = []
@@ -790,25 +799,30 @@ def comb_gen_combs(mstrList, out_fl, thr):
             
     startN = 0
     n = 0
+    out_fl = open(out_fl, "w")
     for num in range(0,len(mstL)):
-
         new_egg = zip(*mstL[num])
-        new_egg = ([x for x in tup if "-" not in x] for tup in new_egg)
+        new_egg = [[x for x in tup if "-" not in x] for tup in new_egg]
         combb = 1
-        
         for i in new_egg:
-            
             if len(i) != 0:
                 combb *= len(i)
-        if (combb > 10):
-            # eliminate species with too many combinations
-            pass
-            
         print(mstrList[n][0], "  combs: " , combb)
-        n += 1
-        """
-        new_egg = zip(*mstL[num])
-        new_egg = ([x for x in tup if "-" not in x] for tup in new_egg)
+            
+        # if too many combinations exist for this species, exclude those
+        # species. 
+        while (combb > thr_tr):
+            # eliminate species with too many combinations
+            comb_refac = 1
+            for k in range(len(new_egg)):
+                if len(new_egg[k]) == longest(new_egg):
+                    new_egg[k] = [str(new_egg[k][0][:7] + " "*11)]
+                if len(new_egg[k]) != 0:
+                    comb_refac *= len(new_egg[k])
+            if comb_refac < combb:
+                combb = int(comb_refac)
+            print(mstrList[n][0], "  refactored combs: " , combb)
+        
         combsCount = []
         each = [[]]
         out_fl.write(str(mstrList[n][0]  + "  combs: " + str(combb) + "\n"))
@@ -821,7 +835,7 @@ def comb_gen_combs(mstrList, out_fl, thr):
             each = neach
         for e in each:
             out_fl.write(str(str(each.index(e)) + "   " + str(e) + "\n"))
-        """
+        
     out_fl.close()
     return True
 

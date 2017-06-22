@@ -41,7 +41,7 @@ def main():
     #   out_file.write(str(i) + "\n")
     #out_file.close()
     
-    pc.comb_gen_combs(L, out_file)
+    pc.comb_gen_combs(L, out_file, 500)
     
 
 if __name__ == '__main__':
