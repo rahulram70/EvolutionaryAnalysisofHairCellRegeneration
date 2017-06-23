@@ -3,7 +3,6 @@
 from __future__ import absolute_import
 import os
 import procomp.procomp as pc
-#import process as ps
 
 """
 Here we generate combinations of transcripts that correlate to
@@ -21,7 +20,6 @@ def main():
     print(script_dir)
     out_file = script_dir + "/ex_out_comb.txt"
     res_dir += "/resources/data-raw/transcript-ids/"
-    #out_file = open(out_file, "w")
 
     L = []
     spid = [i.split()[0] for i in open(spid, "r").read().splitlines()]
@@ -33,13 +31,8 @@ def main():
             L += pc.comb_TrPr(ali_dir, spid) 
     
     L = sorted(L)
-    #for i in L:
-    #    print(i)
 
     L = pc.comb_rm_dups(L, spid)
-    #for i in L:
-    #   out_file.write(str(i) + "\n")
-    #out_file.close()
     
     pc.comb_gen_combs(L, out_file, 500)
     

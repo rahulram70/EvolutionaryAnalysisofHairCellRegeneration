@@ -1144,12 +1144,12 @@ def combGeneCompile(combfile, unalignedfiles, outputFolder):
     NOTES:
         # iterate through all combinations
         # make new .txt for combination to output to. file title should be <geneID><#combination>.txt
-        # ∞∞ iterate through IDs of combination
+        # -- iterate through IDs of combination
             # if ID is included, go to folder of UnalignedSeq's
                 # iterate through seq's till correct ID is found.
                 # then iterate through that ID's file till correct gene is found
                 # copy species ID, gene ID, and seq to current output file
-            # ∞∞ move on to next spec. ID in combination
+            # -- move on to next spec. ID in combination
         # after all combination spec. info have been copied to outputgene file, go to next combination
     """
 
