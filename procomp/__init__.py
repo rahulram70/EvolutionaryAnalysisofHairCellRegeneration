@@ -1,7 +1,7 @@
 
 import pkgutil
 
-__name__ = "Procomp Master Module"
+__name__ = "Procomp Master Package"
 __doc__ = """ here is the master doc """
 
 __all__ = []

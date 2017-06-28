@@ -18,16 +18,12 @@ from Bio import AlignIO
 # Utility Functions //////////////////////////////////////////////
 # ////////////////////////////////////////////////////////////////
     
-def TextToString(path):
-    """ Takes a file path and outputs the described file as string """
-    return open(path, 'r').read()
-
 def SortProtein(alignmentfile, outputfile, orderCmdList):
     """
     OVERVIEW:  
         This function will take a protein sequence and
         then reorders it based on the order of the list (orderCmdList)
-    USE of FUNCTION:
+    USE:
         alignment file ==> sortProtein ==> outputfile
     """
 
@@ -113,7 +109,7 @@ def MainPC_defineHit(RegenL, NonRegenL):
     """
      OVERVIEW: this function checks two groups of amino acids RL and NRL. and then determines if
         the amino acid site classifies as a hit or not. the function returns 1(yes) / 0(no)
-     USE of FUNCTION:
+     USE:
         helper function for MainPC
     """
     return 0
@@ -134,7 +130,7 @@ def MainProteinCompare(alignmentF, groupsfile, outputtxt):
         -outputtxt = .txt file path where output will be written
         -stats = bool for printing stats on output (recommended: keep false)
 
-    USE of FUNCTION:
+    USE:
         folder path -----> alignmentF --\
                                          |
         txt with type ---> groupsfile ---|----> outputtxt
@@ -224,9 +220,9 @@ def MainPC_analysis(hitstxt, outtxt):
     OVERVIEW:
         this function analyzes the output(txt file) from mainproteincompare
         as specified by user.
-    USE of FUNCTION:
-    MainProteinCompare ==> MainPC_analysis ==> textfile
-    MainProteinCompare ==> MainPC_analysis ==> markdown
+    USE:
+        MainProteinCompare ==> MainPC_analysis ==> textfile
+        MainProteinCompare ==> MainPC_analysis ==> markdown
     """
 
     data = open(hitstxt, "r")
@@ -255,17 +251,17 @@ def MainPC_analysis(hitstxt, outtxt):
 def SeqFuncDomain_Fast(alignPath="none", combinationPath="none", funcDomPath="none", outtxt=""):
     """
     OVERVIEW: this function analyses a folder of alignments
-    USE of FUNCTION:
-    funcDomPath ==== > folder of folders containing functional domains for each species
+    USE:
+        funcDomPath ==== > folder of folders containing functional domains for each species
 
-    alignPath ======== > folder of alignment txt files
-    combinationPath == > txt file of combinations (from CombinOfProID output)
+        alignPath ======== > folder of alignment txt files
+        combinationPath == > txt file of combinations (from CombinOfProID output)
     """
     outtxt = open(outtxt, "w")
     if alignPath != "none":
-        alignP = TextToString(alignPath)
+        alignP = open(alignPath, 'r').read() 
     if combinationPath != "none":
-        combP = TextToString(combinationPath)
+        combP = open(combinationPath, 'r').read() 
         combSplit = combP.splitlines()
     curGene = ""
     takeout = "[]',_"
@@ -315,9 +311,9 @@ def SeqFuncDomain_Fast(alignPath="none", combinationPath="none", funcDomPath="no
         domCountDataBase.append(newSp)
 
     if alignPath != "none":
-        alignP = TextToString(alignPath)
+        alignP = open(alignPath, 'r') 
     if combinationPath != "none":
-        combP = TextToString(combinationPath)
+        combP = open(combinationPath, 'r').read() 
         combP = combP.splitlines()
     combinationDataBase = []
     for cb in combP:
@@ -384,17 +380,17 @@ def SeqFuncDomain_FastAnalysis(L, SPID):
 def SeqFuncDomain(alignPath="none", combinationPath="none", funcDomPath="none", outtxt=""):
     """
     OVERVIEW: this function analyses a folder of alignments
-    USE of FUNCTION:
-    funcDomPath ==== > folder of folders containing functional domains for each species
+    USE:
+        funcDomPath ==== > folder of folders containing functional domains for each species
 
-    alignPath ======== > folder of alignment txt files
-    combinationPath == > txt file of combinations (from CombinOfProID output)
+        alignPath ======== > folder of alignment txt files
+        combinationPath == > txt file of combinations (from CombinOfProID output)
     """
     outtxt = open(outtxt, "w")
     if alignPath != "none":
-        alignP = TextToString(alignPath)
+        alignP = open(alignPath, 'r').read() 
     if combinationPath != "none":
-        combP = TextToString(combinationPath)
+        combP = open(combinationPath, 'r').read() 
         combP = combP.splitlines()
 
     # === cycles through combinations  === ########
@@ -452,8 +448,8 @@ def SeqFuncDomain_analysis(SFD, SPID, outtxt=""):
     OVERVIEW: this is a helper function for SFD (seqFuncDomain) it takes the output from SFD and
         looks for hits by showing R to NR comparisons. it refines hit definition by filtering out
         instances where R's have more function domains
-    USE of FUNCTION:
-    seqFuncDomain output ==== > SFD ===> outtxt
+    USE:
+        seqFuncDomain output ==== > SFD ===> outtxt
     """
 
     SFD = open(SFD, "r")
@@ -538,7 +534,10 @@ def SeqFuncDomain_analysis(SFD, SPID, outtxt=""):
     return 0
 
 def FunctionDomainLen(ensemblHits):
-    """ FORMAT DEMO          Database     site of interest          reg.Start       reg.End
+    """ 
+    OVERVIEW:
+        takes a file of ensembl domains and analyzes those domains for their length.
+    FORMAT DEMO          Database     site of interest          reg.Start       reg.End
     ENSDARP00000062559     2.60.40.10       174                        155             217
     ENSDARP00000062559     2.60.40.10       310                        218             312
     ENSDARP00000062559     2.60.40.10       383                        313             408
@@ -588,8 +587,10 @@ def FunctionDomainLen(ensemblHits):
 
 def EnsemblHits(strToAnalyze, hitList):
     """
-    This Function takes a string to analyze (ensembl database output) and a hit list from the protein compare function
-    output. It then compares the two and outputs a list of results
+    OVERVIEW:
+        This Function takes a string to analyze (ensembl database output)
+        and a hit list from the protein compare function output.
+        It then compares the two and outputs a list of results.
     """
 
     lineiterator = strToAnalyze.splitlines()
@@ -617,10 +618,11 @@ def EnsemblHits(strToAnalyze, hitList):
 
 def DataList(dir, idList):
     """
-    OVERVIEW: his function will take a folder of text files and find all files with the same prefix,
+    OVERVIEW:
+        takes a folder of text files and find all files with the same prefix,
         then compile those files into 1 string.
-    Loc = /Volumes/HDD/-Apps/projects_Python/ProteinConvergence2016/Resources/Protein_Domains-2016-07-26/Protein/Domains
-
+    NOTES:
+        Loc = /Volumes/HDD/-Apps/projects_Python/ProteinConvergence2016/Resources/Protein_Domains-2016-07-26/Protein/Domains
     """
 
     #first compile all .txt's with the same prefix
@@ -683,10 +685,10 @@ def DataList(dir, idList):
 
 def comb_TrPr(id_dir, spgr):
     """
-    OVERVIEW
+    OVERVIEW:
         combines a folder of transcript -- protein associations
         into a long list.
-    INPUTS
+    INPUTS:
         alignments_dir = path to folder with alignments
         spgr           = string for species id to look for (i.e. "DARP")
     """
@@ -714,9 +716,9 @@ def comb_TrPr(id_dir, spgr):
 
 def comb_rm_dups(tr_pr_L, names):
     """
-    OVERVIEW
+    OVERVIEW:
         re-sorts the list (tr_pr_L) and removes duplicate entries
-    INPUTS
+    INPUTS:
         tr_pr_L = list of ( transcipts - protein id's) 
                   from comb_TrPr()
         names   = list of ordered speices
@@ -765,11 +767,11 @@ def comb_rm_dups(tr_pr_L, names):
 
 def comb_gen_combs(mstrList, out_fl, thr_tr):
     """
-    OVERVIEW
+    OVERVIEW:
         This Function prints out the combinations of the output from SortDuplicates.
         using data not outputed from sortedduplicates will most likely not return valid
         output.
-    INPUTS
+    INPUTS:
         mstrList = List object from comb_rm_dups() output
         out_fl = file where output will be written to
         thr_tr = threshold for how many combinations each transcript can have.
@@ -844,10 +846,9 @@ def DomainHits_GeneProtein(alignments_dir, SPID):
     """
     OVERVIEW: Aquires the proteinID that associates with its GeneID
 
-    USE of FUNC:
+    USE:
         alignments_dir ===> path to folder with alignments
         SPID =============> string for species id to look for (i.e. "DARP")
-
     RETURNS:    list of "geneID   ProID"
     """
 
@@ -872,10 +873,10 @@ def DomainHits(domain_dir, alignments_dir, mainpc_file, output_file):
     """
     OVERVIEW: 
         this function takes a folder of text files with domain content (gene, database, startsite, endsite)
-    and an output txt from MainPCProteinCompare. an procedure finds seq hits which fall inside functional
-    domains and outputs the results to a text file.
+        and an output txt from MainPCProteinCompare. an procedure finds seq hits which fall inside functional
+        domains and outputs the results to a text file.
 
-    USE of FUNC:
+    USE:
         domain_dir =====> folder path containing ensembl domain output
         mainpc_file ====> txt path from MainPC_proteinCompare output
     """
@@ -958,7 +959,8 @@ def DomainHits(domain_dir, alignments_dir, mainpc_file, output_file):
 
 def DomainHits_analysis(dm_output_file):
     """
-    OVERVIEW: This function takes the file outputed by the core function and organizes the data
+    OVERVIEW: 
+        This function takes the file outputed by the core function and organizes the data
         to be more readable.
     """
     dm = open(dm_output_file, "r")
@@ -1021,15 +1023,15 @@ def DomainHits_analysis(dm_output_file):
 
 def SortDuplicates(listGP, names):
     """
-    OVERVIEW
+    OVERVIEW:
         re-sorts the list input arranging the non-zebrafish proteins together,
         accounting for when zebrafish proteins and genes are duplicates.
 
-    INPUTS
+    INPUTS:
         listGP = list of ( DAR gene - Species pro ID) from DomainHits_GeneProtein()
         names  = list of ordered species id's
 
-    NOTES
+    NOTES:
         DARG DARP species proteins......
     """
 
@@ -1070,11 +1072,12 @@ def SortDuplicates(listGP, names):
 
 def CombinOfProID(mstrList):
     """
-    This Function prints out the combinations of the output from SortDuplicates.
-     using data not outputed from sortedduplicates will most likely not return valid
-     output.
-
-     /Volumes/HDD/-Apps/projects_Python/ProteinConvergence2016/Resources/CombOutPut.txt
+    OVERVIEW:
+        This Function prints out the combinations of the output from SortDuplicates.
+        using data not outputed from sortedduplicates will most likely not return valid
+        output.
+    NOTES:
+        /Volumes/HDD/-Apps/projects_Python/ProteinConvergence2016/Resources/CombOutPut.txt
     """
 
     combOut = open("/Volumes/HDD/-Apps/projects_Python/ProteinConvergence2016/Resources/CombOutPut.txt", "w")
@@ -1137,9 +1140,10 @@ def CombinOfProID(mstrList):
  
 def combGeneCompile(combfile, unalignedfiles, outputFolder):
     """
-    OVERVIEW: this function takes a .txt file for combinations from CombinOfProID and makes a new .txt
-     containing the associated unaligned protein sequences of that combination
-    USE of FUNCTIONS:
+    OVERVIEW: 
+        this function takes a .txt file for combinations from CombinOfProID and makes a new .txt
+        containing the associated unaligned protein sequences of that combination
+    USE:
         SortDuplicates => CombinOfProID => ( combGeneCompile ) => bioMuscleAlign => proteinCompare
 
     NOTES:
@@ -1154,7 +1158,7 @@ def combGeneCompile(combfile, unalignedfiles, outputFolder):
         # after all combination spec. info have been copied to outputgene file, go to next combination
     """
 
-    combfile = TextToString(combfile)           # here we define vars
+    combfile = open(combfile, 'r').read()           # here we define vars
     combfile = combfile.splitlines()
     currentGene = ""
     errorLogFileLoc = outputFolder + "1_errorLog" + ".txt"
@@ -1198,9 +1202,10 @@ def combGeneCompile(combfile, unalignedfiles, outputFolder):
 
 def bioMuscleAlign(inputF, musclePath, outputF=""):
     """
-    OVERVIEW: returns aligned .fa files of the unaligned .fa files from "inputF" folder in the same
+    OVERVIEW: 
+        returns aligned .fa files of the unaligned .fa files from "inputF" folder in the same
         folder using the MUSCLE algorithm for peptide alignment.
-    USE of FUNCTION:
+    USE:
         1. copy unaligned fasta (.fa) files to new folder
         2. use that folder path as inputF
         3. function will overwrite all .fa files with aligned seq's
@@ -1228,9 +1233,11 @@ def bioMuscleAlign(inputF, musclePath, outputF=""):
 
 def checkForAlignment(folder):
     """
-    OVERVIEW: this function simply looks at alignment files in "folder" and checks for hyphens to see if any
-     files were/are not aligned.
-    USE of FUNCTION: bioMuscleAlign ==> ( checkForAlignment )
+    OVERVIEW: 
+        this function simply looks at alignment files in "folder" and checks for hyphens to see if any
+        files were/are not aligned.
+    USE: 
+        bioMuscleAlign ==> ( checkForAlignment )
     """
     
     for file in os.listdir(folder):
@@ -1245,5 +1252,3 @@ def checkForAlignment(folder):
                     print(fileName, " may not be aligned.!!! -only 1 id line found")
                 else:
                     print(fileName, " is not aligned.!!!")
-
-
