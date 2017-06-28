@@ -3,6 +3,7 @@
 # Last Update: May 23, 2017
 # Start Date:  Feb 20, 2016
 # Version:     alpha 1.1
+__name__ = "Procomp Analysis Module"
 
 import os
 import shutil

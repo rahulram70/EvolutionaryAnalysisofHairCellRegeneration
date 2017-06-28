@@ -1,4 +1,5 @@
 __author__ = 'RobbyBoney'
+__name__ = "Datagrapher Module"
 """
 DATE_Started: FEB 2016
 DATE_Updated: JAN 9 2017
