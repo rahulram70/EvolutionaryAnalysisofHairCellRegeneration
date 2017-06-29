@@ -1,4 +1,6 @@
 
+__name__ = "Process Module"
+
 """
 # Author:      Robby Boney, robby.boney@wsu.edu
 # License:     ...
