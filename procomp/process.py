@@ -20,18 +20,18 @@ from os.path import isfile, join
 
 def row_rm_by_col_cond (f_in, col, f_out=""):
     """
+    Overview:
         Removes rows from a dataset by the condition specified
-        in given column.
-        
-        Inputs:
-            f    = csv file path
-            col  = title of the column to be checked
-            cond = condition required for the row to be 
-                   removed.
-        Outputs:
-            modified csv will output to a new file called 'X-out.csv'
-            unless no output file is specified, then output is written
-            to the input file.
+        in given column.        
+    Inputs:
+        f    = csv file path
+        col  = title of the column to be checked
+        cond = condition required for the row to be 
+                removed.
+    Outputs:
+        modified csv will output to a new file called 'X-out.csv'
+        unless no output file is specified, then output is written
+        to the input file.
     """
 
     if (f_out == ""):
@@ -56,13 +56,14 @@ def row_rm_by_col_cond (f_in, col, f_out=""):
 
 def row_rm_by_dup (f_in, col, f_out=""):
     """
-    Removes rows from data frame that contain duplicate values
-    in a particular column.
-    INPUTS:
+    Overview:
+        Removes rows from data frame that contain duplicate values
+        in a particular column.
+    Inputs:
         f_in    = csv file path
         col     = title of the column to be checked
         f_out   = csv file path to write results to.
-    OUTPUT:
+    Output:
         modified csv will output to a new file called 'X-out.csv'
         unless no output file is specified, then output is written
         to the input file.
@@ -90,12 +91,13 @@ def row_rm_by_dup (f_in, col, f_out=""):
 
 def merge_folder_to_file(fd_in, f_out, save=1):
     """
-    Compile a folder of text files into a single text file.
-    INPUTS:
+    Overview
+        Compile a folder of text files into a single text file.
+    Inputs:
         fd_in   = folder of text files
         f_out   = file to compile files to
         save    = option to save old text files
-    OUTPUTS:
+    Outputs:
         f_out   = ideally put the output file outside the folder
                   being compiled from.
     """
@@ -110,11 +112,4 @@ def merge_folder_to_file(fd_in, f_out, save=1):
     with open(f_out, "w+") as out:
         for i in L:
             out.write(i + '\n')
-
-
-
-
-
-
-
 

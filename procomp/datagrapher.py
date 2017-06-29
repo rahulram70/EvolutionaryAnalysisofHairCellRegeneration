@@ -1,12 +1,10 @@
 __author__ = 'RobbyBoney'
 __name__ = "Datagrapher Module"
-"""
+__version__ = "1.1.0"
+__doc__ = """
+OVERVIEW: this script is focussed soley on graphing and visualizng data generated from bio_inforegen2.py
 DATE_Started: FEB 2016
 DATE_Updated: JAN 9 2017
-VERSION: alpha2
-
-OVERVIEW: this script is focussed soley on graphing and visualizng data generated from bio_inforegen2.py
-
 """
 import os
 import time
@@ -15,12 +13,8 @@ import matplotlib.pyplot as plt
 
 def ARO_dotplot(domfile, hitfile):
     """
-    OVERVIEW:
+    Overview:
         this funtion takes 2 files and produces the graph of divergence from hits to domain hits
-
-    USE of FUNC:
-        domfile ===> 
-
     """
     datapoints = []
     data_x = []
@@ -42,7 +36,6 @@ def ARO_dotplot(domfile, hitfile):
             for dom in domfile_s:
                 dmID = dom.split()
                 if (lnID == dmID[5]):
-                    #print(lnID, "= ", line.split()[0],"---", dmID[5], "= ", dmID[0])
                     data_x.append(float(line.split()[0]))
                     data_y.append(float(dmID[0]))
                     break
@@ -53,8 +46,8 @@ def ARO_dotplot(domfile, hitfile):
 
 
 if __name__ == "__main__":
-    conhits = "/Users/themusicman/Projects/Python/bioinformaticsJAN2017/Results/Jan17-2017_condensedHits.txt"
-    domhits = "/Users/themusicman/Projects/Python/bioinformaticsJAN2017/Results/Feb5-2017_domainHits_con_sorted.txt"
+    conhits = "/bioinformaticsJAN2017/Results/Jan17-2017_condensedHits.txt"
+    domhits = "/bioinformaticsJAN2017/Results/Feb5-2017_domainHits_con_sorted.txt"
 
     resultsL = ARO_dotplot(domhits, conhits)
     #resultsL = [ [0.5,0.3,0.4], [0.5,0.3,0.4] ]

@@ -683,7 +683,7 @@ def DataList(dir, idList):
     # if the gene is not in geneListSearched
     return True
 
-def comb_TrPr(id_dir, spgr):
+def comb_TrPr(id_dir, spgr, name_filter="", print_computed=0):
     """
     OVERVIEW:
         combines a folder of transcript -- protein associations
@@ -691,11 +691,15 @@ def comb_TrPr(id_dir, spgr):
     INPUTS:
         alignments_dir = path to folder with alignments
         spgr           = string for species id to look for (i.e. "DARP")
+        name_filter    = you can choose to use only files with the given
+                         string filter, default set to accept all files.
+        print_computed = will print out the files used.
     """
     tr_pr_L = []
     for file in os.listdir(id_dir):
-        
-        if file.endswith(".txt"):
+        if file.endswith(".txt") and name_filter in file:
+            if print_computed:
+                print(file)
             fileloc = id_dir + file
             fileName = "" + file
             fileString = open(fileloc, "r").read()
@@ -714,7 +718,7 @@ def comb_TrPr(id_dir, spgr):
     print("comb_TrPr() has finished")
     return tr_pr_L
 
-def comb_rm_dups(tr_pr_L, names):
+def comb_rm_dups(tr_pr_L, names, ident):
     """
     OVERVIEW:
         re-sorts the list (tr_pr_L) and removes duplicate entries
@@ -722,13 +726,14 @@ def comb_rm_dups(tr_pr_L, names):
         tr_pr_L = list of ( transcipts - protein id's) 
                   from comb_TrPr()
         names   = list of ordered speices
+        ident = the identifier to be used for the combinations, typically it will be 
+            of the format (DARG, DART, or DARP)
     """
     spacer = "                  "
     spacer_cnt = 11
     dataCol = []
     curgene = ""
     masterLForG = []
-    testString = ""
 
     for i in tr_pr_L:
         if curgene != i.split()[0]:
@@ -738,15 +743,14 @@ def comb_rm_dups(tr_pr_L, names):
             masterLForG.clear()
             masterLForG.append(list())
         for row in masterLForG:
-            
             if len(row) == 0 and masterLForG.index(row) == 0:
                 row.append(curgene)
             elif len(row) == 0 and masterLForG.index(row) != 0:
                 row.append(spacer)
 
-            if i.split()[1][:7] in testString.join(row) and masterLForG.index(row) == len(masterLForG)-1:
+            if i.split()[1][:7] in "".join(row[1:]) and masterLForG.index(row) == len(masterLForG)-1:
                 masterLForG.append(list())
-            elif i.split()[1][:7] not in testString.join(row):
+            elif i.split()[1][:7] not in "".join(row[1:]):
                 row.append(i.split()[1])
                 break
 
@@ -754,18 +758,19 @@ def comb_rm_dups(tr_pr_L, names):
     # previous processing.
     for i in dataCol:
         for nme in names:
-            if ''.join(i).find(nme) == -1:
-                if "DART" in ''.join(i):
+            if ''.join(i[1:]).find(nme) == -1:
+                if ident in i[0]:
                     i.append(nme + " "*spacer_cnt)
                 else:
                     i.append(nme + "-"*spacer_cnt)
+                    
 
         i[1:] = sorted(i[1:])
 
     print("comb_rm_dups() has finished")
     return dataCol
 
-def comb_gen_combs(mstrList, out_fl, thr_tr):
+def comb_gen_combs(mstrList, out_fl, thr_tr, ident, w=0, refac=1):
     """
     OVERVIEW:
         This Function prints out the combinations of the output from SortDuplicates.
@@ -776,6 +781,8 @@ def comb_gen_combs(mstrList, out_fl, thr_tr):
         out_fl = file where output will be written to
         thr_tr = threshold for how many combinations each transcript can have.
         thr_sp = threshold for how many combinations each species can have.
+        ident = the identifier to be used for the combinations, typically it will be 
+            of the format (DARG, DART, or DARP)
     """
     def longest(L):
         """ L is list of lists """
@@ -790,12 +797,12 @@ def comb_gen_combs(mstrList, out_fl, thr_tr):
     mstL = []
     tmpL = []
     for i in mstrList:
-        if "DART" in i[0] and i[0] != reg :
+        if ident in i[0] and i[0] != reg :
             reg = i[0]
             mstL.append(list(tmpL))
             tmpL.clear()
         tmpL.append(i[1:])
-        if "DART" in i[0] and mstrList.index(i) == len(mstrList)-1:
+        if ident in i[0] and mstrList.index(i) == len(mstrList)-1:
             reg = i[0]
             mstL.append(list(tmpL))
             tmpL.clear()
@@ -810,11 +817,12 @@ def comb_gen_combs(mstrList, out_fl, thr_tr):
         for i in new_egg:
             if len(i) != 0:
                 combb *= len(i)
-        print(mstrList[n][0], "  combs: " , combb)
+        #print(mstrList[n][0], "  combs: " , combb)
+        print(combb)
             
         # if too many combinations exist for this species, exclude those
         # species. 
-        while (combb > thr_tr):
+        while (refac and combb > thr_tr):
             # eliminate species with too many combinations
             comb_refac = 1
             for k in range(len(new_egg)):
@@ -826,18 +834,21 @@ def comb_gen_combs(mstrList, out_fl, thr_tr):
                 combb = int(comb_refac)
             print(mstrList[n][0], "  refactored combs: " , combb)
         
+        
         combsCount = []
         each = [[]]
-        out_fl.write(str(mstrList[n][0]  + "  combs: " + str(combb) + "\n"))
+        if w:
+            out_fl.write(str(mstrList[n][0]  + "  combs: " + str(combb) + "\n"))
         n += 1
-        while n < len(mstrList) and "DART" not in mstrList[n][0]:
+        while n < len(mstrList) and ident not in mstrList[n][0]:
             n += 1
 
-        for l in new_egg:
-            neach = [x + [t] for t in l for x in each]
-            each = neach
-        for e in each:
-            out_fl.write(str(str(each.index(e)) + "   " + str(e) + "\n"))
+        if w:
+            for l in new_egg:
+                neach = [x + [t] for t in l for x in each]
+                each = neach
+            for e in each:
+                out_fl.write(str(str(each.index(e)) + "   " + str(e) + "\n"))
         
     out_fl.close()
     return True
