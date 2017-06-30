@@ -40,7 +40,7 @@ This project uses a few core principles to organize and maintain consistency wit
 |---------|--------|-----|
 |ret_val  | any function that returns a value, will return this variable |Any |
 |out_fl |this is the variable designated for the output file a function writes to if applicable |File |
-| | |
+
 
 #### Docstrings
 In our project each method's docsring contains an:
