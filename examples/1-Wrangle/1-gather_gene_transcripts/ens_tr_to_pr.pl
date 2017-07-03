@@ -19,8 +19,8 @@ $registry->load_registry_from_db(
 my $transcript_adaptor =
     $registry->get_adaptor( 'Zebrafish', 'Core', 'Transcript' );
 
-#@files = </Users/themusicman/Projects/Python/procomp/resources/data-raw/transcript-ids/*>;
-my $some_dir = "/Users/themusicman/Projects/Python/procomp/resources/data-raw/transcript-ids";
+#@files = </procomp/resources/data-raw/transcript-ids/*>;
+my $some_dir = "/Users/themusicman/Projects/Science/procomp/resources/data-raw/transcript-ids";
 opendir(my $dh, $some_dir) || die "Can't open $some_dir: $!";
 while (readdir $dh) {
     
@@ -61,6 +61,13 @@ while (readdir $dh) {
     }
 }
 closedir $dh;
+
+
+#
+#
+# the following commented out code is for reference
+#
+#
 
 #foreach $folder (@files) {
 
