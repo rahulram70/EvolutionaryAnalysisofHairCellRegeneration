@@ -116,7 +116,6 @@ def MainPC_defineHit(RegenL, NonRegenL):
 
 def MainProteinCompare(alignmentF, groupsfile, outputtxt):
     """
-    DATE_Started: Jan 6, 2017
     OVERVIEW: 
         this function is a refactor of the function "ProteinCompare".
         This will allow for simpler use of the function rather then using it
@@ -683,11 +682,11 @@ def DataList(dir, idList):
     # if the gene is not in geneListSearched
     return True
 
-def comb_TrPr(id_dir, spgr, name_filter="", print_computed=0):
+def comb_IdPr(id_dir, spgr, name_filter="", print_computed=0):
     """
     OVERVIEW:
-        combines a folder of transcript -- protein associations
-        into a long list.
+        combines a folder of Id -- protein associations
+        into a long list. Id are typically (XXXG, XXXT, XXXP)
     INPUTS:
         alignments_dir = path to folder with alignments
         spgr           = string for species id to look for (i.e. "DARP")
@@ -809,7 +808,9 @@ def comb_gen_combs(mstrList, out_fl, thr_tr, ident, w=0, refac=1):
             
     startN = 0
     n = 0
-    out_fl = open(out_fl, "w")
+    if w:
+        out_fl = open(out_fl, "w")
+    ret_val = []
     for num in range(0,len(mstL)):
         new_egg = zip(*mstL[num])
         new_egg = [[x for x in tup if "-" not in x] for tup in new_egg]
@@ -817,8 +818,6 @@ def comb_gen_combs(mstrList, out_fl, thr_tr, ident, w=0, refac=1):
         for i in new_egg:
             if len(i) != 0:
                 combb *= len(i)
-        #print(mstrList[n][0], "  combs: " , combb)
-        print(combb)
             
         # if too many combinations exist for this species, exclude those
         # species. 
@@ -832,13 +831,16 @@ def comb_gen_combs(mstrList, out_fl, thr_tr, ident, w=0, refac=1):
                     comb_refac *= len(new_egg[k])
             if comb_refac < combb:
                 combb = int(comb_refac)
-            print(mstrList[n][0], "  refactored combs: " , combb)
+            toWrite = str(mstrList[n][0] + "  refactored combs: " + combb)
+            ret_val.append(toWrite)
         
         
         combsCount = []
         each = [[]]
+        toWrite = str(mstrList[n][0]  + "  combs: " + str(combb))
+        ret_val.append(toWrite)
         if w:
-            out_fl.write(str(mstrList[n][0]  + "  combs: " + str(combb) + "\n"))
+            out_fl.write(toWrite)
         n += 1
         while n < len(mstrList) and ident not in mstrList[n][0]:
             n += 1
@@ -849,9 +851,10 @@ def comb_gen_combs(mstrList, out_fl, thr_tr, ident, w=0, refac=1):
                 each = neach
             for e in each:
                 out_fl.write(str(str(each.index(e)) + "   " + str(e) + "\n"))
-        
-    out_fl.close()
-    return True
+
+    if w: 
+        out_fl.close()
+    return ret_val
 
 def DomainHits_GeneProtein(alignments_dir, SPID):
     """

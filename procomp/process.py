@@ -18,26 +18,27 @@ import os
 from os import listdir
 from os.path import isfile, join
 
-def row_rm_by_col_cond (f_in, col, f_out=""):
+def row_rm_by_col_cond (fl_in, col, fl_out="", cond="0"):
     """
     Overview:
         Removes rows from a dataset by the condition specified
         in given column.        
     Inputs:
-        f    = csv file path
-        col  = title of the column to be checked
-        cond = condition required for the row to be 
-                removed.
+        in_fl   = file path of csv to be processed
+        out_fl  = file path of csv to be written to
+        col     = title of the column to be checked
+        cond    = condition required for the row to be 
+                  removed. default set to "0".
     Outputs:
         modified csv will output to a new file called 'X-out.csv'
         unless no output file is specified, then output is written
         to the input file.
     """
 
-    if (f_out == ""):
-        f_out = f_in
+    if (fl_out == ""):
+        fl_out = fl_in
 
-    df  = pd.read_csv(f_in)
+    df  = pd.read_csv(fl_in)
     col = df.columns.get_loc(col)    
     L   = []
     
@@ -45,16 +46,16 @@ def row_rm_by_col_cond (f_in, col, f_out=""):
     for index, row in df.iterrows():
         val = df.iloc[index, col]
         val = val.split(",")
-        if ('0' in val):
+        if (cond in val):
             L.append(index)
 
     # 2. removing elements from L 
     df = df.drop(L)
 
     # 3. convert dataframe to csv output file
-    df.to_csv(f_out)
+    df.to_csv(fl_out)
 
-def row_rm_by_dup (f_in, col, f_out=""):
+def row_rm_by_dup (fl_in, col, fl_out=""):
     """
     Overview:
         Removes rows from data frame that contain duplicate values
@@ -69,9 +70,9 @@ def row_rm_by_dup (f_in, col, f_out=""):
         to the input file.
     """
      
-    if (f_out == ""):
-        f_out = f_in
-    df  = pd.read_csv(f_in) 
+    if (fl_out == ""):
+        fl_out = f_in
+    df  = pd.read_csv(fl_in) 
     initLen = df.shape[0]
 
     # 1. sort dataframe by selected column
@@ -87,7 +88,7 @@ def row_rm_by_dup (f_in, col, f_out=""):
     # 4. convert dataframe to csv output file
     print("rows now: {}, rows starting: {}".format(df.shape[0], initLen))
     print("{} rows removed".format( (int(initLen) - int(df.shape[0])) ))
-    df.to_csv(f_out)
+    df.to_csv(fl_out)
 
 def merge_folder_to_file(fd_in, f_out, save=1):
     """

@@ -33,13 +33,15 @@ This project uses a few core principles to organize and maintain consistency wit
 |NR |represents a "non-regenerating species" |
 |fl |represents a file |
 |dir |represents a directory |
+|cond |represents a condition for a particular outcome | 
 
 
 #### Variables
 |Value    |Meaning |Type |
 |---------|--------|-----|
 |ret_val  | any function that returns a value, will return this variable |Any |
-|out_fl |this is the variable designated for the output file a function writes to if applicable |File |
+|fl_out |variable designated for the output file a function writes to if applicable |File / String |
+|fl_in |variable designated for the input file a function reads from |File / String |
 
 
 #### Docstrings

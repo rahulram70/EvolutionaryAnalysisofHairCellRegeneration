@@ -12,17 +12,20 @@
 
 ## Dependancies
 
-In order to use this project a list of dependancies will first need to be installed or setup. This also depends on what you plan to use the project for. Procomp can be broken down into the following categories with their associated dependancies:
+In order to use this project a list of dependancies will first need to be installed or setup. This primarily depends on what you plan to use the workflow for. Procomp can be broken down into the following categories with their associated dependancies:
 
-- Wrangler ( querying data from ensembl )
+- Example 1-Wrangling ( querying data from ensembl )
     - virtualenv or conda
     - pycogent
     - sqlalchemy
     - mysql-connector-python
-- Process ( cleaning datasets and preparing them for analysis )
+- Example 2-Process ( cleaning datasets and preparing them for analysis )
     - pandas
-- Procomp ( analysis on the cleaned datasets )
+- Example 3-Procomp ( analysis on the cleaned datasets )
     - biopython
+- Example 4-Presentaion ( Visualization of data)
+    - matplotlib
+    - pandas
 
 all packages used are available to install using pip (a common python package installer)
 
