@@ -12,7 +12,7 @@ def main():
     outputTxt = script_dir + "/procomp-out.txt"
     ids = script_dir + "/sp_id-Jan6-2017.txt"
     
-    pc.MainProteinCompare(alignedFolder, ids, outputTxt)
+    pc.MainProteinCompare(alignedFolder, ids, "R", "NR", outputTxt)
     
 
 if __name__ == '__main__':
