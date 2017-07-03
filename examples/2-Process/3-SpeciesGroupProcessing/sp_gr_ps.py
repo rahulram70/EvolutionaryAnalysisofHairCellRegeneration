@@ -2,10 +2,7 @@
 
 from __future__ import absolute_import
 import os
-#import procomp as pc
-#import process as ps
 
-#@pc.procomp.stats
 def main():
     script_dir = os.path.dirname(os.path.abspath(__file__))
     inputFile = os.path.abspath(os.path.join(script_dir, os.pardir))
