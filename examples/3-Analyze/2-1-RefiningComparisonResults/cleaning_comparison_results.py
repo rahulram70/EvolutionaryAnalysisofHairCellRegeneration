@@ -12,7 +12,7 @@ def main():
     outputFile = script_dir + "/procomp-analyzed.txt"
 
 
-    #pc.MainPC_analysis(inputFile, outputFile)
+    pc.MainPC_analysis(inputFile, outputFile)
     
 
 if __name__ == '__main__':

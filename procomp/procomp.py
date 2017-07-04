@@ -114,7 +114,7 @@ def MainPC_defineHit(RegenL, NonRegenL):
     """
     return 0
 
-def MainProteinCompare(alignmentF, groupsfile, outputtxt):
+def MainProteinCompare(alignmentF, groupsfile, g1, g2, outputtxt):
     """
     OVERVIEW: 
         this function is a refactor of the function "ProteinCompare".
@@ -123,11 +123,13 @@ def MainProteinCompare(alignmentF, groupsfile, outputtxt):
         - the goal of the Protein compare function is to compare amino acids from aligned seq's and
         find hits as defined by the user, in our case, hits where regenerator species are all similar
         and non-regenerators are different from regenerators.
-        NOTES:
-        -alignmentF = folder path of aligned protein seq's
-        -groupsfile = .txt file path with every line containing (SpeciesID R/NR)
-        -outputtxt = .txt file path where output will be written
-        -stats = bool for printing stats on output (recommended: keep false)
+    INPUTS:
+        alignmentF  = (string) folder path of aligned protein seq's
+        groupsfile  = (string) .txt file path with every line containing (SpeciesID R/NR)
+        g1          = (string) identifier for species in groupsfile for group 1
+        g2          = (string) identifier for species in groupsfile for group 2
+        outputtxt   = (string) .txt file path where output will be written
+        ###-stats      = bool for printing stats on output (recommended: keep false)
 
     USE:
         folder path -----> alignmentF --\
@@ -155,6 +157,7 @@ def MainProteinCompare(alignmentF, groupsfile, outputtxt):
             aliLen = len(t)
             hits = 0
 
+            # Iterate over the sites in the amino acid seq for all species
             for site in range(aliLen):
                 regens = []
                 nonregens = []
@@ -196,7 +199,7 @@ def MainProteinCompare(alignmentF, groupsfile, outputtxt):
                         if i in regenLjoin and i is not "-":      # definition of NOT a hit
                             hitTest = 0
                             break
-                        
+ 
                     if hitTest == 1:
                         hits += 1
                         output1 = "\n|  site = " + str(site) + "  R: "+ str(regenLjoin) + " NR: "+ "".join(nonregens)
@@ -215,7 +218,6 @@ def MainProteinCompare(alignmentF, groupsfile, outputtxt):
 
 def MainPC_analysis(hitstxt, outtxt):
     """
-    DATE_Started: Jan 6 2017
     OVERVIEW:
         this function analyzes the output(txt file) from mainproteincompare
         as specified by user.
@@ -783,7 +785,7 @@ def comb_gen_combs(mstrList, out_fl, thr_tr, ident, w=0, refac=1):
         ident = the identifier to be used for the combinations, typically it will be 
             of the format (DARG, DART, or DARP)
     """
-    def longest(L):
+    def _longest(L):
         """ L is list of lists """
         longest = len(L[0])
         for i in L:
@@ -825,7 +827,7 @@ def comb_gen_combs(mstrList, out_fl, thr_tr, ident, w=0, refac=1):
             # eliminate species with too many combinations
             comb_refac = 1
             for k in range(len(new_egg)):
-                if len(new_egg[k]) == longest(new_egg):
+                if len(new_egg[k]) == _longest(new_egg):
                     new_egg[k] = [str(new_egg[k][0][:7] + " "*11)]
                 if len(new_egg[k]) != 0:
                     comb_refac *= len(new_egg[k])
