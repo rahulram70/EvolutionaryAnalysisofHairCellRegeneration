@@ -1,0 +1,61 @@
+(23) files with (10170/11339) found ids in master for Alpaca
+(23) files with (10170/11339) found ids in master for Amazon Molly
+(23) files with (10170/11339) found ids in master for Anole
+(23) files with (10170/11339) found ids in master for Armardillo
+(23) files with (10170/11339) found ids in master for Bushbaby
+(23) files with (10170/11339) found ids in master for Cat
+(23) files with (10170/11339) found ids in master for Cave Fish
+(23) files with (10170/11339) found ids in master for Chicken
+(23) files with (10170/11339) found ids in master for Chimpanzee
+(23) files with (10170/11339) found ids in master for Chinese Softshell Turtle
+(23) files with (10170/11339) found ids in master for Cod
+(23) files with (10170/11339) found ids in master for Coelacanth
+(23) files with (10170/11339) found ids in master for Cow
+(23) files with (10170/11339) found ids in master for Dog
+(23) files with (10170/11339) found ids in master for Dolphin
+(23) files with (10170/11339) found ids in master for Duck
+(23) files with (10170/11339) found ids in master for Elephant
+(23) files with (10170/11339) found ids in master for Ferret
+(23) files with (10170/11339) found ids in master for Flycatcher
+(23) files with (10170/11339) found ids in master for Fugu
+(23) files with (10170/11339) found ids in master for Gibbon
+(23) files with (10170/11339) found ids in master for Gorilla
+(23) files with (10170/11339) found ids in master for Guinea Pig
+(23) files with (10170/11339) found ids in master for Hedgehog
+(23) files with (10170/11339) found ids in master for Horse
+(23) files with (10170/11339) found ids in master for Human
+(23) files with (10170/11339) found ids in master for Hyrax
+(23) files with (10170/11339) found ids in master for Kangaroo Rat
+(23) files with (10170/11339) found ids in master for Lamprey
+(23) files with (10170/11339) found ids in master for Lesser Hedgehog
+(23) files with (10170/11339) found ids in master for Macaque
+(23) files with (10170/11339) found ids in master for Marmoset
+(23) files with (10170/11339) found ids in master for Medaka
+(23) files with (10170/11339) found ids in master for Megabat
+(23) files with (10170/11339) found ids in master for Microbat
+(23) files with (10170/11339) found ids in master for Mouse
+(23) files with (10170/11339) found ids in master for Mouse Lemur
+(23) files with (10170/11339) found ids in master for Olive Baboon
+(23) files with (10170/11339) found ids in master for Opossum
+(23) files with (10170/11339) found ids in master for Orangutan
+(23) files with (10170/11339) found ids in master for Panda
+(23) files with (10170/11339) found ids in master for Pig
+(23) files with (10170/11339) found ids in master for Pika
+(23) files with (10170/11339) found ids in master for Platyfish
+(23) files with (10170/11339) found ids in master for Platypus
+(23) files with (10170/11339) found ids in master for Rabbit
+(23) files with (10170/11339) found ids in master for Rat
+(23) files with (10170/11339) found ids in master for Sheep
+(23) files with (10170/11339) found ids in master for Shrew
+(23) files with (10170/11339) found ids in master for Sloth
+(23) files with (10170/11339) found ids in master for Spotted Gar
+(23) files with (10170/11339) found ids in master for Squirrel
+(23) files with (10170/11339) found ids in master for Stickleback
+(23) files with (10170/11339) found ids in master for Tasmanian Devil
+(23) files with (10170/11339) found ids in master for Tetraodon
+(23) files with (10170/11339) found ids in master for Tilapia
+(23) files with (10170/11339) found ids in master for Tree Shrew
+(23) files with (10170/11339) found ids in master for Turkey
+(23) files with (10170/11339) found ids in master for Xenopus
+(23) files with (10170/11339) found ids in master for Zebrafinch
+(23) files with (10170/11339) found ids in master for Zebrafish
