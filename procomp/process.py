@@ -90,7 +90,7 @@ def row_rm_by_dup (fl_in, col, fl_out=""):
     print("{} rows removed".format( (int(initLen) - int(df.shape[0])) ))
     df.to_csv(fl_out)
 
-def merge_folder_to_file(fd_in, f_out, save=1):
+def merge_folder_to_file(dir_in, fl_out, save=1):
     """
     Overview
         Compile a folder of text files into a single text file.
@@ -104,13 +104,13 @@ def merge_folder_to_file(fd_in, f_out, save=1):
     """
 
     L = []
-    for file in os.listdir(fd_in):
+    for file in os.listdir(dir_in):
         if file.endswith(".txt"):
-            path = fd_in + file
+            path = dir_in + file
             val = open(path, "r").read()
             L.append(val)
 
-    with open(f_out, "w+") as out:
+    with open(fl_out, "w+") as out:
         for i in L:
             out.write(i + '\n')
 
