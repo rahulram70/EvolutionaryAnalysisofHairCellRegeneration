@@ -44,12 +44,15 @@ def SortProtein(alignmentfile, outputfile, orderCmdList):
     output = output.join(tempList)
     return output
 
-def RemoveSameGene(file):
+def RemoveSameGene(file, ident):
     """
     OVERVIEW: 
         This function takes any output text file from MainPC_analysis or DomainHits_analysis
         and returns the same output excluding any duplicate genes leaving the gene with the highest 
         score on the far left.
+    USE:
+        file  = path to and output file from MainPC_analysis or DomainHits_analysis
+        ident = unique id to use for checking lines (i.e. "DARG" or "DART")
     """
 
     file = open(file, "r")
@@ -63,7 +66,7 @@ def RemoveSameGene(file):
     L = file[0].split()
 
     for i in range(len(L)):
-        if ("DARG" in L[i]):
+        if (ident in L[i]):
             indnum = i
             break
 
@@ -129,14 +132,6 @@ def MainProteinCompare(alignmentF, groupsfile, g1, g2, outputtxt):
         g1          = (string) identifier for species in groupsfile for group 1
         g2          = (string) identifier for species in groupsfile for group 2
         outputtxt   = (string) .txt file path where output will be written
-        ###-stats      = bool for printing stats on output (recommended: keep false)
-
-    USE:
-        folder path -----> alignmentF --\
-                                         |
-        txt with type ---> groupsfile ---|----> outputtxt
-                                         |
-        [1/0] ---> print stats [T/F] ---/
     """
 
     hitDefinition = ""
@@ -172,6 +167,7 @@ def MainProteinCompare(alignmentF, groupsfile, g1, g2, outputtxt):
                             elif file.split()[1] == "NR":
                                 nonregens.append(seqSite)
                                 break
+                
                 #  ======== ======== ======== analysis Section ======== ======== ========
                 # add species count in read out
                 # definition of hit inside functional domain
