@@ -23,7 +23,7 @@ def main():
     spid = res_dir + "/resources/Species-Group.txt"
     print(script_dir)
     out_file = script_dir + "/ex_out_comb.txt"
-    res_dir += "/resources/data-raw/Protein-ids from transcript query/"
+    res_dir += "/resources/data-raw/Current-transcript-ids/"
 
     L = []
     spid = [i.split()[0] for i in open(spid, "r").read().splitlines()]
@@ -44,7 +44,7 @@ def main():
     # generate combinations of orthologs with protein ids
     # transcripts with too many combinations will be refactored
     # to a more managable count.
-    pc.comb_gen_combs(L, out_file, 500)
+    pc.comb_gen_combs(L, out_file, 500, ident="DART")
     
 
 if __name__ == '__main__':

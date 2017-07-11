@@ -817,10 +817,10 @@ def comb_gen_combs(mstrList, out_fl, thr_tr, ident, w=0, refac=1):
             if len(i) != 0:
                 combb *= len(i)
             
+        # -----------------------------
         # if too many combinations exist for this species, exclude those
         # species. 
         while (refac and combb > thr_tr):
-            # eliminate species with too many combinations
             comb_refac = 1
             for k in range(len(new_egg)):
                 if len(new_egg[k]) == _longest(new_egg):
