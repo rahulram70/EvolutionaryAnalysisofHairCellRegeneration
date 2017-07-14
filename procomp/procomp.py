@@ -108,14 +108,6 @@ def stats(f):
 # ////////////////////////////////////////////////////////////////
 # Core Functions    //////////////////////////////////////////////
 # ////////////////////////////////////////////////////////////////
-def MainPC_defineHit(RegenL, NonRegenL):
-    """
-     OVERVIEW: this function checks two groups of amino acids RL and NRL. and then determines if
-        the amino acid site classifies as a hit or not. the function returns 1(yes) / 0(no)
-     USE:
-        helper function for MainPC
-    """
-    return 0
 
 def MainProteinCompare(alignmentF, groupsfile, g1, g2, outputtxt):
     """
@@ -680,7 +672,7 @@ def DataList(dir, idList):
     # if the gene is not in geneListSearched
     return True
 
-def comb_IdPr(id_dir, spgr, name_filter="", print_computed=0):
+def comb_IdPr(id_dir, name_filter="", print_computed=0):
     """
     OVERVIEW:
         combines a folder of Id -- protein associations
@@ -767,7 +759,7 @@ def comb_rm_dups(tr_pr_L, names, ident):
     print("comb_rm_dups() has finished")
     return dataCol
 
-def comb_gen_combs(mstrList, out_fl, thr_tr, ident, w=0, refac=1):
+def comb_gen_combs(mstrList, spid, out_fl, thr_tr, ident, w=0, refac=1):
     """
     OVERVIEW:
         This Function prints out the combinations of the output from SortDuplicates.
@@ -775,6 +767,7 @@ def comb_gen_combs(mstrList, out_fl, thr_tr, ident, w=0, refac=1):
         output.
     INPUTS:
         mstrList = List object from comb_rm_dups() output
+        spid = path to the species group file
         out_fl = file where output will be written to
         thr_tr = threshold for how many combinations each transcript can have.
         thr_sp = threshold for how many combinations each species can have.
@@ -789,6 +782,15 @@ def comb_gen_combs(mstrList, out_fl, thr_tr, ident, w=0, refac=1):
                 longest = len(i)
         return longest
 
+    def _check_ens_spe(ens_id, spid_path):
+        """ returns the group the ensembl id 
+        is appart of """
+        for item in spid_path:
+            if ens_id in item[0]:
+                return item[1]
+        print ("{} was not found in the group list".format(ens_id))
+        return None
+        
     
     reg = mstrList[0][0]
     mstL = []
@@ -829,13 +831,29 @@ def comb_gen_combs(mstrList, out_fl, thr_tr, ident, w=0, refac=1):
                     comb_refac *= len(new_egg[k])
             if comb_refac < combb:
                 combb = int(comb_refac)
-            toWrite = str(mstrList[n][0] + "  refactored combs: " + combb)
+            toWrite = str(mstrList[n][0] + "  refactored combs: " + str(combb))
             ret_val.append(toWrite)
         
+        # ----------------------------
+        # check to see how many species fall in R and NR
+        #
+        R_cnt = 0
+        NR_cnt = 0
+        blank_cnt = 0
+        print("len of new_egg ({})".format(len(new_egg)))
+        for i_spe in new_egg:
+            check = _check_ens_spe(i_spe[0][:6], spid)
+            if " " not in i_spe[0] and "-" not in i_spe[0]:
+                if check == "R":
+                    R_cnt += 1
+                elif check == "NR":
+                    NR_cnt += 1
+            else:
+                blank_cnt += 1
         
         combsCount = []
         each = [[]]
-        toWrite = str(mstrList[n][0]  + "  combs: " + str(combb))
+        toWrite = str(mstrList[n][0]  + "  combs: {}     ( R / NR / missing) = ( {} / {} / {} )".format(combb, R_cnt, NR_cnt, blank_cnt))
         ret_val.append(toWrite)
         if w:
             out_fl.write(toWrite)
@@ -1264,3 +1282,4 @@ def checkForAlignment(folder):
                     print(fileName, " may not be aligned.!!! -only 1 id line found")
                 else:
                     print(fileName, " is not aligned.!!!")
+

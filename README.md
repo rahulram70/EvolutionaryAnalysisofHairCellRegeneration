@@ -30,7 +30,7 @@ To use this software, the easiest method follows:
 2. Add the path of the folder to the source path in the 
    .bashrc or similar .rc file with:
 
-    export PYTHONPATH=$PYTHONPATH:/path/to/procomp
+    ```export PYTHONPATH=$PYTHONPATH:/path/to/procomp```
 
 3. The module and its functions can now be used by calling:
 

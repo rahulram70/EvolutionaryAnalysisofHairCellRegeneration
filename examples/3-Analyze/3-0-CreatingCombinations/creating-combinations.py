@@ -26,25 +26,27 @@ def main():
     res_dir += "/resources/data-raw/Current-transcript-ids/"
 
     L = []
-    spid = [i.split()[0] for i in open(spid, "r").read().splitlines()]
+    spid = [i.split() for i in open(spid, "r").read().splitlines()]
     print(spid)
 
     # add all tr - pr associations to a list
     for F in os.listdir(res_dir):
         if ("." not in F):
             ali_dir = res_dir + F + "/"
-            L += pc.comb_IdPr(ali_dir, spid) 
+            L += pc.comb_IdPr(ali_dir) 
     
     # sort tr - pr associations by tr id.
     L = sorted(L)
 
     # remove any duplicates and generate table of all ortholog proteins
-    L = pc.comb_rm_dups(L, spid, ident="DART")
+    L = pc.comb_rm_dups(L, list(zip(*spid))[0], ident="DART")
     
     # generate combinations of orthologs with protein ids
     # transcripts with too many combinations will be refactored
     # to a more managable count.
-    pc.comb_gen_combs(L, out_file, 500, ident="DART")
+    out_L = pc.comb_gen_combs(L, spid,  out_file, 500, ident="DART")
+    for line in out_L:
+        print(line)
     
 
 if __name__ == '__main__':
