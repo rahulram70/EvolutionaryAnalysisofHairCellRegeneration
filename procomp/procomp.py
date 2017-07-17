@@ -1,8 +1,7 @@
 # Author:      Robby Boney, robby.boney@wsu.edu
-# License:     ...
 # Last Update: May 23, 2017
 # Start Date:  Feb 20, 2016
-# Version:     alpha 1.1
+
 __name__ = "Procomp Analysis Module"
 
 import os
@@ -894,6 +893,7 @@ def comb_gen_pro_files(combfile, seq_dir, out_dir):
     """
 
     def _gen_seq_hash_tb(l_seq_dir=seq_dir):
+        """ generates a 2d hash table (disctionary) """
         seq_table = {}
         for file in os.listdir(l_seq_dir):
             if file.endswith(".txt"):
@@ -1134,122 +1134,8 @@ def DomainHits_analysis(dm_output_file):
             tophit = i[0]
     return 0
 
-def SortDuplicates(listGP, names):
-    """
-    OVERVIEW:
-        re-sorts the list input arranging the non-zebrafish proteins together,
-        accounting for when zebrafish proteins and genes are duplicates.
 
-    INPUTS:
-        listGP = list of ( DAR gene - Species pro ID) from DomainHits_GeneProtein()
-        names  = list of ordered species id's
 
-    NOTES:
-        DARG DARP species proteins......
-    """
-
-    spacer = "                  "
-    dataCol = []
-    curgene = ""
-    masterLForG = []
-    testString = ""
-
-    for i in listGP:
-        if curgene != i.split()[0]:
-            curgene = i.split()[0]
-            for msti in masterLForG:
-                dataCol.append(list(msti))
-            masterLForG.clear()
-            masterLForG.append(list())
-        for row in masterLForG:
-            if len(row) == 0 and masterLForG.index(row) == 0:
-                row.append(curgene)
-            elif len(row) == 0 and masterLForG.index(row) != 0:
-                row.append(spacer)
-            if i.split()[1][:7] in testString.join(row) and masterLForG.index(row) == len(masterLForG)-1:
-                masterLForG.append(list())
-            elif i.split()[1][:7] not in testString.join(row):
-                row.append(i.split()[1])
-                break
-
-    for i in dataCol:
-        for nme in names:
-            if ''.join(i).find(nme) == -1:
-                if "DARG" in ''.join(i):
-                    i.append(nme + "           ")
-                else:
-                    i.append(nme +     "-----------")
-
-        i[1:] = sorted(i[1:])
-    return dataCol
-
-def CombinOfProID(mstrList):
-    """
-    OVERVIEW:
-        This Function prints out the combinations of the output from SortDuplicates.
-        using data not outputed from sortedduplicates will most likely not return valid
-        output.
-    NOTES:
-        /Volumes/HDD/-Apps/projects_Python/ProteinConvergence2016/Resources/CombOutPut.txt
-    """
-
-    combOut = open("/Volumes/HDD/-Apps/projects_Python/ProteinConvergence2016/Resources/CombOutPut.txt", "w")
-    reg = mstrList[0][0]
-    mstL = []
-    tmpL = []
-    for i in mstrList:
-
-        if "DARG" in i[0] and i[0] != reg :
-            reg = i[0]
-            mstL.append(list(tmpL))
-            tmpL.clear()
-        tmpL.append(i[1:])
-        if "DARG" in i[0] and mstrList.index(i) == len(mstrList)-1:
-            reg = i[0]
-            mstL.append(list(tmpL))
-            tmpL.clear()
-    startN = 0
-    n = 0
-    for num in range(0,len(mstL)):
-
-        new_egg = zip(*mstL[num])
-        new_egg = ([x for x in tup if "-" not in x] for tup in new_egg)
-        combb = 1
-        for i in new_egg:
-            if len(i) != 0:
-                combb *= len(i)
-        print(mstrList[n][0], "  combs: " , combb)
-
-        """
-        This following code writes the output to a text file for further use in the analysis
-
-        new_egg = zip(*egg)
-        new_egg = ([x for x in tup if "-" not in x] for tup in new_egg)
-        each = [[]]
-        for l in new_egg:
-            neach = [x + [t] for t in l for x in each]
-            each = neach
-        for e in each:
-            print(e)
-
-        """
-
-        new_egg = zip(*mstL[num])
-        new_egg = ([x for x in tup if "-" not in x] for tup in new_egg)
-        combsCount = []
-        each = [[]]
-        combOut.write(str(mstrList[n][0]  + "  combs: " + str(combb) + "\n"))
-        n += 1
-        while n < len(mstrList) and "DARG" not in mstrList[n][0]:
-            n += 1
-
-        for l in new_egg:
-            neach = [x + [t] for t in l for x in each]
-            each = neach
-        for e in each:
-            combOut.write(str(str(each.index(e)) + "   " + str(e) + "\n"))
-    combOut.close()
-    return True
 
 def bioMuscleAlign(inputF, musclePath, outputF=""):
     """
@@ -1285,7 +1171,7 @@ def bioMuscleAlign(inputF, musclePath, outputF=""):
 def checkForAlignment(folder):
     """
     OVERVIEW: 
-        this function simply looks at alignment files in "folder" and checks for hyphens to see if any
+        this function looks at alignment files in "folder" and checks for hyphens to see if any
         files were/are not aligned.
     USE: 
         bioMuscleAlign ==> ( checkForAlignment )
