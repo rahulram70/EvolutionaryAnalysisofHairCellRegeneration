@@ -790,6 +790,11 @@ def comb_gen_combs(mstrList, spid, out_fl, thr_tr, ident, w=0, refac=1):
                 return item[1]
         print ("{} was not found in the group list".format(ens_id))
         return None
+
+    def _write_L_to_out(in_L, out_fl):
+        """ writes a list (L) to a file (out_fl) """
+        for i in L:
+            pass
         
     
     reg = mstrList[0][0]
@@ -840,7 +845,7 @@ def comb_gen_combs(mstrList, spid, out_fl, thr_tr, ident, w=0, refac=1):
         R_cnt = 0
         NR_cnt = 0
         blank_cnt = 0
-        print("len of new_egg ({})".format(len(new_egg)))
+        #print("len of new_egg ({})".format(len(new_egg)))
         for i_spe in new_egg:
             check = _check_ens_spe(i_spe[0][:6], spid)
             if " " not in i_spe[0] and "-" not in i_spe[0]:
@@ -853,9 +858,10 @@ def comb_gen_combs(mstrList, spid, out_fl, thr_tr, ident, w=0, refac=1):
         
         combsCount = []
         each = [[]]
-        toWrite = str(mstrList[n][0]  + "  combs: {}     ( R / NR / missing) = ( {} / {} / {} )".format(combb, R_cnt, NR_cnt, blank_cnt))
+        toWrite = str(mstrList[n][0]  + "  combs: {}     ( R / NR / missing) = ( {} / {} / {} )\n".format(combb, R_cnt, NR_cnt, blank_cnt))
         ret_val.append(toWrite)
         if w:
+            #toWrite = str( mstrList[n][0] + "  combs: {}".format(combb) )
             out_fl.write(toWrite)
         n += 1
         while n < len(mstrList) and ident not in mstrList[n][0]:
@@ -865,12 +871,89 @@ def comb_gen_combs(mstrList, spid, out_fl, thr_tr, ident, w=0, refac=1):
             for l in new_egg:
                 neach = [x + [t] for t in l for x in each]
                 each = neach
+            
             for e in each:
-                out_fl.write(str(str(each.index(e)) + "   " + str(e) + "\n"))
+                toWrite = str(str(each.index(e)) + " ," + str(",".join(e)) + "\n")
+                out_fl.write(toWrite)
 
     if w: 
         out_fl.close()
     return ret_val
+
+def comb_gen_pro_files(combfile, seq_dir, out_dir):
+    """
+    OVERVIEW: 
+        this function takes a .txt file for combinations from CombinOfProID and makes a new .txt
+        containing the associated unaligned protein sequences of that combination
+    USE:
+        combfile = path to output .txt from comb_gen_combs
+        seq_dir = path to dir with unaligned protein sequences
+        out_dir = path to dir where combination files will be written to
+        
+        comb_IdPr => comb_rm_dups => comb_gen_combs => bioMuscleAlign => MainProteinCompare
+    """
+
+    def _gen_seq_hash_tb(l_seq_dir=seq_dir):
+        seq_table = {}
+        for file in os.listdir(l_seq_dir):
+            if file.endswith(".txt"):
+                uafloc = seq_dir + file
+                tempF = open(uafloc, "r")
+                tempFText = tempF.read()
+                cur_sp_id =  tempFText.splitlines()[0].split()[0][1:7]
+                seq_table[cur_sp_id] = {}
+                for protein in tempFText.split(">"):
+                    L = protein.split()
+                    if len(L) == 2:
+                        #print(protein.split()[0])
+                        seq_table[cur_sp_id][protein.split()[0]] = protein.split()[1]
+                
+                tempF.close()
+        return seq_table
+
+    def _get_seq(seq_id, tb):
+        try:
+            return tb[seq_id[:6]][seq_id]
+        except:
+            return -1
+
+    # Set up hash table of species ids and sequences
+    #
+    seq_tb = _gen_seq_hash_tb()
+    
+    combfile = open(combfile, 'r').read().splitlines()  
+    errorLog = []
+
+    cur_comb = ""
+    num = 0
+
+    # here we iterate through combination file
+    for comb in combfile:      
+        if num >= 100:
+            errorLog.append("END PROCESS")
+            return errorLog
+        temp = comb.split(",")
+        if "ENS" in temp[0]:
+            cur_comb = temp[0].split()[0]
+            print(cur_comb)
+        
+        else:
+            outloc = out_dir + cur_comb + "_" + temp[0] + ".txt"
+            #print(outloc)
+            outfile = open(outloc, "w+")
+            
+            for sp in temp:
+                if len(sp) >= 7:
+                    #print(sp)
+                    seq = _get_seq(sp, seq_tb)
+                
+                    if seq != -1:
+                        outfile.write(">" + sp + "\n")
+                        outfile.write(seq + "\n")
+            num += 1
+            outfile.close()
+
+    return errorLog
 
 def DomainHits_GeneProtein(alignments_dir, SPID):
     """
@@ -1167,68 +1250,6 @@ def CombinOfProID(mstrList):
             combOut.write(str(str(each.index(e)) + "   " + str(e) + "\n"))
     combOut.close()
     return True
- 
-def combGeneCompile(combfile, unalignedfiles, outputFolder):
-    """
-    OVERVIEW: 
-        this function takes a .txt file for combinations from CombinOfProID and makes a new .txt
-        containing the associated unaligned protein sequences of that combination
-    USE:
-        SortDuplicates => CombinOfProID => ( combGeneCompile ) => bioMuscleAlign => proteinCompare
-
-    NOTES:
-        # iterate through all combinations
-        # make new .txt for combination to output to. file title should be <geneID><#combination>.txt
-        # -- iterate through IDs of combination
-            # if ID is included, go to folder of UnalignedSeq's
-                # iterate through seq's till correct ID is found.
-                # then iterate through that ID's file till correct gene is found
-                # copy species ID, gene ID, and seq to current output file
-            # -- move on to next spec. ID in combination
-        # after all combination spec. info have been copied to outputgene file, go to next combination
-    """
-
-    combfile = open(combfile, 'r').read()           # here we define vars
-    combfile = combfile.splitlines()
-    currentGene = ""
-    errorLogFileLoc = outputFolder + "1_errorLog" + ".txt"
-    errorLog = open(errorLogFileLoc, "w+")
-
-    num = 0
-
-    for gene in combfile:                       # here we iterate through combination file
-        gene = gene.replace(",","")
-        gene = gene.replace("[", "")
-        gene = gene.replace(",", "")
-        gene = gene.replace("]", "")
-        gene = gene.replace("'", "")
-        gene = gene.replace("_", "")
-        temp = gene.split()
-        if "ENS" in temp[0]:
-            currentGene = temp[0]
-            print(currentGene)
-        else:
-            outloc = outputFolder + currentGene + "_" + temp[0] + ".txt"
-            outfile = open(outloc, "w+")
-            for sp in temp:
-                if len(sp) > 10:
-                    for file in os.listdir(unalignedfiles):
-                        if file.endswith(".txt"):
-                            uafloc = unalignedfiles + file
-                            tempF = open(uafloc, "r")
-                            tempFText = tempF.read()
-                            curFileName = os.path.basename(tempF.name).split(".txt")[0]
-                            if curFileName in sp:
-                                tempFsplit = tempFText.split(">")
-                                found = 0
-                                for item in tempFsplit:
-                                    if sp in item:
-                                        found = 1
-                                        item = ">" + item
-                                        outfile.write(item)
-                                if found == 0:
-                                    errorLog.write("\n"+currentGene + "_" + temp[0] + " :: " + sp + " unable to locate in seq list")
-            num += 1
 
 def bioMuscleAlign(inputF, musclePath, outputF=""):
     """

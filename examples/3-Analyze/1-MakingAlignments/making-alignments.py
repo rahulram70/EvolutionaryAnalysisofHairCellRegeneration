@@ -3,19 +3,24 @@
 from __future__ import absolute_import
 import os
 import procomp as pc
-import time
 
 @pc.stats
 def main():
     script_dir = os.path.dirname(os.path.abspath(__file__))
-    aligned_outF = script_dir + "/alignedSeqOutput/"
-    unalignedF = script_dir + "/unalignedSeqs/"
+    res_dir = os.path.abspath(os.path.join(script_dir, os.pardir))
 
-    mspath = os.path.abspath(os.path.join(script_dir, os.pardir))
-    mspath = os.path.abspath(os.path.join(mspath, os.pardir))
-    mspath += "/resources/muscle3.8.31_i86darwin64/muscle3.8.31_i86darwin64.31_i86darwin64"
+    # go up 2 directories
+    for i in range(2):
+        res_dir = os.path.abspath(os.path.join(res_dir, os.pardir))
+
+
+    out_dir = res_dir + "/resources/data-cleaned/aligned_seq/"
+    in_dir = res_dir + "/resources/data-cleaned/unaligned_seq/"
+
+    mspath = res_dir + "/resources/muscle3.8.31_i86darwin64/muscle3.8.31_i86darwin64.31_i86darwin64"
     
-    pc.bioMuscleAlign(unalignedF, mspath, aligned_outF)
+
+    pc.bioMuscleAlign(in_dir, mspath, out_dir)
 
 if __name__ == '__main__':
     main()

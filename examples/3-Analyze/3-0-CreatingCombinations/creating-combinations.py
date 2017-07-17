@@ -44,7 +44,7 @@ def main():
     # generate combinations of orthologs with protein ids
     # transcripts with too many combinations will be refactored
     # to a more managable count.
-    out_L = pc.comb_gen_combs(L, spid,  out_file, 500, ident="DART")
+    out_L = pc.comb_gen_combs(L, spid,  out_file, 500, ident="DART", w=1)
     for line in out_L:
         print(line)
     
