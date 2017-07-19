@@ -20,13 +20,13 @@ def main():
     for i in range(2):
         res_dir = os.path.abspath(os.path.join(res_dir, os.pardir))
 
-    spid = res_dir + "/resources/Species-Group.txt"
+    spid_path = res_dir + "/resources/Species-Group.txt"
     print(script_dir)
     out_file = script_dir + "/ex_out_comb.txt"
     res_dir += "/resources/data-raw/Current-transcript-ids/"
 
     L = []
-    spid = [i.split() for i in open(spid, "r").read().splitlines()]
+    spid = [i.split() for i in open(spid_path, "r").read().splitlines()]
     print(spid)
 
     # add all tr - pr associations to a list
@@ -44,9 +44,13 @@ def main():
     # generate combinations of orthologs with protein ids
     # transcripts with too many combinations will be refactored
     # to a more managable count.
-    out_L = pc.comb_gen_combs(L, spid,  out_file, 500, ident="DART", w=1)
-    for line in out_L:
-        print(line)
+    out_L = pc.comb_gen_combs(L, spid_path,  out_file, 500, ident="DART", w=1)
+    
+    with open("status_log.csv", "w+") as output_log:
+        for line in out_L:
+            print(line)
+            #output_log.write(line+"\n")
+    
     
 
 if __name__ == '__main__':
