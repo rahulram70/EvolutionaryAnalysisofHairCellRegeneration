@@ -151,6 +151,7 @@ def get_proID_database():
         sort(pro_id, pro_seq, 0, len(pro_id) - 1 )
         species_pro_ID_database_list.append(pro_id)
         species_pro_seq_database_list.append(pro_seq)
+        
 
     return species_pro_ID_database_list, species_pro_seq_database_list
     
