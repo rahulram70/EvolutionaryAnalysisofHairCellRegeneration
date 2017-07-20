@@ -1,4 +1,8 @@
 .DS_STORE
 *.swp
 .vscode
+<<<<<<< HEAD
 resources/*
+=======
+resources
+>>>>>>> 7c8e451a0c4d5b32a873c5d07e2328f35a2f0b15

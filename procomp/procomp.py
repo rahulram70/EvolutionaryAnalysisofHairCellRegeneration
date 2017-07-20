@@ -1,8 +1,7 @@
 # Author:      Robby Boney, robby.boney@wsu.edu
-# License:     ...
 # Last Update: May 23, 2017
 # Start Date:  Feb 20, 2016
-# Version:     alpha 1.1
+
 __name__ = "Procomp Analysis Module"
 
 import os
@@ -104,6 +103,30 @@ def stats(f):
         return ret
     return caller
 
+def spid_tb_gen(spid_path):
+    """ Generates a Hash Table for all speices and their group association """
+    table = {}
+    spid = open(spid_path, "r")
+    spid_L = spid.read().splitlines()
+    spid.close()
+    for i in spid_L:
+        species = i.split()[0]
+        group = i.split()[1]
+        table[species] = group
+    return table
+
+def spid_tb_get_group(spe_id, tb):
+    """ Returns the group a particular species is associated with """
+    key = spe_id[:7]
+    if key[-1] == "T":
+        key = key[:6] + "P"
+    if key == "ENST000":
+        key = "ENSP000"
+    try:    
+        return tb[key]
+    except:
+        print("ERROR: cannot find ({}) in given table".format(key))
+        return None
 
 # ////////////////////////////////////////////////////////////////
 # Core Functions    //////////////////////////////////////////////
@@ -782,21 +805,43 @@ def comb_gen_combs(mstrList, spid, out_fl, thr_tr, ident, w=0, refac=1):
                 longest = len(i)
         return longest
 
+    def _get_gr_longest(L, gr, tb):
+        """ returns the species with the most orthologs for a certain group """
+        longest = len(L[0])
+        for i in L:
+            if spid_tb_get_group(i, tb) == gr:
+                if len(i) > longest:
+                longest = len(i)
+        return spe_id
+
     def _check_ens_spe(ens_id, spid_path):
-        """ returns the group the ensembl id 
-        is appart of """
+        """ returns the group the ensembl id is appart of """
         for item in spid_path:
             if ens_id in item[0]:
                 return item[1]
         print ("{} was not found in the group list".format(ens_id))
         return None
 
-    def _write_L_to_out(in_L, out_fl):
-        """ writes a list (L) to a file (out_fl) """
-        for i in L:
-            pass
-        
+    def _check_R_NR_miss(comb_L):
+        """ returns the number of species for each group in the combination """
+        R_cnt = 0
+        NR_cnt = 0
+        blank_cnt = 0 
+        for i_spe in comb_L:            
+            check = spid_tb_get_group(i_spe[0], spid_tb)
+            if " " not in i_spe[0] and "-" not in i_spe[0]:
+                if check == "R":
+                    R_cnt += 1
+                elif check == "NR":
+                    NR_cnt += 1
+            else:
+                blank_cnt += 1
+        return R_cnt, NR_cnt, blank_cnt
     
+    # Set up table for species ids
+    #
+    spid_tb = spid_tb_gen(spid)
+
     reg = mstrList[0][0]
     mstL = []
     tmpL = []
@@ -815,7 +860,7 @@ def comb_gen_combs(mstrList, spid, out_fl, thr_tr, ident, w=0, refac=1):
     n = 0
     if w:
         out_fl = open(out_fl, "w")
-    ret_val = []
+    ret_val = ["Transcript, Combinations, R (#), NR (#), Missing (#), Times Refactored"]
     for num in range(0,len(mstL)):
         new_egg = zip(*mstL[num])
         new_egg = [[x for x in tup if "-" not in x] for tup in new_egg]
@@ -825,44 +870,57 @@ def comb_gen_combs(mstrList, spid, out_fl, thr_tr, ident, w=0, refac=1):
                 combb *= len(i)
             
         # -----------------------------
-        # if too many combinations exist for this species, exclude those
-        # species. 
+        # if too many combinations exist for this transcript,
+        # exclude species with large numbers of orthologs while
+        # assuring that R and NR groups are not put off balance
+        # 
+        R_c = 0
+        NR_c = 0
+        higher_stack = ""
+        miss_c = 0
+        refac_c = 0
+        spe_rm_c = 0
         while (refac and combb > thr_tr):
             comb_refac = 1
+            R_c, NR_c, miss_c = _check_R_NR_miss(new_egg)
+            if R_c > NR_c:
+                higher_stack = "R"
+            else:
+                higher_stack = "NR"
+
+            max_c = _longest(new_egg)
             for k in range(len(new_egg)):
-                if len(new_egg[k]) == _longest(new_egg):
-                    new_egg[k] = [str(new_egg[k][0][:7] + " "*11)]
+                spe_id = new_egg[k][0]
+                spe_gr = spid_tb_get_group(spe_id, spid_tb)
+
+                # Remove particular species from the combination
+                if len(new_egg[k]) == max_c:
+                    new_egg[k] = [str(spe_id[:7] + " "*11)]
+                    max_c = _longest(new_egg)
+                    spe_rm_c += 1
+
+                # Calculate combination count
                 if len(new_egg[k]) != 0:
                     comb_refac *= len(new_egg[k])
             if comb_refac < combb:
                 combb = int(comb_refac)
-            toWrite = str(mstrList[n][0] + "  refactored combs: " + str(combb))
+            refac_c += 1
+            toWrite = "     {} --- Refactored {} times, removed {} species, and {} combs".format(mstrList[n][0], refac_c, spe_rm_c, combb)
             ret_val.append(toWrite)
         
         # ----------------------------
         # check to see how many species fall in R and NR
         #
-        R_cnt = 0
-        NR_cnt = 0
-        blank_cnt = 0
-        #print("len of new_egg ({})".format(len(new_egg)))
-        for i_spe in new_egg:
-            check = _check_ens_spe(i_spe[0][:6], spid)
-            if " " not in i_spe[0] and "-" not in i_spe[0]:
-                if check == "R":
-                    R_cnt += 1
-                elif check == "NR":
-                    NR_cnt += 1
-            else:
-                blank_cnt += 1
+        R_c, NR_c, miss_c = _check_R_NR_miss(new_egg)
         
         combsCount = []
         each = [[]]
-        toWrite = str(mstrList[n][0]  + "  combs: {}     ( R / NR / missing) = ( {} / {} / {} )\n".format(combb, R_cnt, NR_cnt, blank_cnt))
+        toWrite = "{},{},{},{},{},{}".format(mstrList[n][0], combb, \
+         R_c, NR_c, miss_c, refac_c)
         ret_val.append(toWrite)
         if w:
             #toWrite = str( mstrList[n][0] + "  combs: {}".format(combb) )
-            out_fl.write(toWrite)
+            out_fl.write(toWrite + "\n")
         n += 1
         while n < len(mstrList) and ident not in mstrList[n][0]:
             n += 1
@@ -875,7 +933,6 @@ def comb_gen_combs(mstrList, spid, out_fl, thr_tr, ident, w=0, refac=1):
             for e in each:
                 toWrite = str(str(each.index(e)) + " ," + str(",".join(e)) + "\n")
                 out_fl.write(toWrite)
-
     if w: 
         out_fl.close()
     return ret_val
@@ -894,6 +951,7 @@ def comb_gen_pro_files(combfile, seq_dir, out_dir):
     """
 
     def _gen_seq_hash_tb(l_seq_dir=seq_dir):
+        """ generates a 2d dictionary for the protein sequences """
         seq_table = {}
         for file in os.listdir(l_seq_dir):
             if file.endswith(".txt"):
@@ -905,54 +963,58 @@ def comb_gen_pro_files(combfile, seq_dir, out_dir):
                 for protein in tempFText.split(">"):
                     L = protein.split()
                     if len(L) == 2:
-                        #print(protein.split()[0])
                         seq_table[cur_sp_id][protein.split()[0]] = protein.split()[1]
                 
                 tempF.close()
         return seq_table
 
     def _get_seq(seq_id, tb):
+        """ returns the protein sequence for a given id """
         try:
             return tb[seq_id[:6]][seq_id]
         except:
             return -1
 
-    # Set up hash table of species ids and sequences
+    # Set up hash table of species ids and sequences as well as open
+    # combination files and set inital variables
     #
     seq_tb = _gen_seq_hash_tb()
-    
     combfile = open(combfile, 'r').read().splitlines()  
     errorLog = []
-
     cur_comb = ""
     num = 0
 
-    # here we iterate through combination file
-    for comb in combfile:      
+    # here we iterate through the combination file
+    for comb in combfile:   
+
+        # This is a threshold of how many combinations to iterate over   
         if num >= 100:
             errorLog.append("END PROCESS")
             return errorLog
+
+        # convert current combination into list from CSV style
         temp = comb.split(",")
+
+        # if current line is an id line, set current transcript id
+        # to this id
         if "ENS" in temp[0]:
             cur_comb = temp[0].split()[0]
             print(cur_comb)
-        
+
+        # if combination line generate combination file by accessing 
+        # the dictionary
         else:
             outloc = out_dir + cur_comb + "_" + temp[0] + ".txt"
-            #print(outloc)
             outfile = open(outloc, "w+")
             
             for sp in temp:
                 if len(sp) >= 7:
-                    #print(sp)
                     seq = _get_seq(sp, seq_tb)
-                
                     if seq != -1:
                         outfile.write(">" + sp + "\n")
                         outfile.write(seq + "\n")
             num += 1
             outfile.close()
-
     return errorLog
 
 def DomainHits_GeneProtein(alignments_dir, SPID):
@@ -1134,122 +1196,8 @@ def DomainHits_analysis(dm_output_file):
             tophit = i[0]
     return 0
 
-def SortDuplicates(listGP, names):
-    """
-    OVERVIEW:
-        re-sorts the list input arranging the non-zebrafish proteins together,
-        accounting for when zebrafish proteins and genes are duplicates.
 
-    INPUTS:
-        listGP = list of ( DAR gene - Species pro ID) from DomainHits_GeneProtein()
-        names  = list of ordered species id's
 
-    NOTES:
-        DARG DARP species proteins......
-    """
-
-    spacer = "                  "
-    dataCol = []
-    curgene = ""
-    masterLForG = []
-    testString = ""
-
-    for i in listGP:
-        if curgene != i.split()[0]:
-            curgene = i.split()[0]
-            for msti in masterLForG:
-                dataCol.append(list(msti))
-            masterLForG.clear()
-            masterLForG.append(list())
-        for row in masterLForG:
-            if len(row) == 0 and masterLForG.index(row) == 0:
-                row.append(curgene)
-            elif len(row) == 0 and masterLForG.index(row) != 0:
-                row.append(spacer)
-            if i.split()[1][:7] in testString.join(row) and masterLForG.index(row) == len(masterLForG)-1:
-                masterLForG.append(list())
-            elif i.split()[1][:7] not in testString.join(row):
-                row.append(i.split()[1])
-                break
-
-    for i in dataCol:
-        for nme in names:
-            if ''.join(i).find(nme) == -1:
-                if "DARG" in ''.join(i):
-                    i.append(nme + "           ")
-                else:
-                    i.append(nme +     "-----------")
-
-        i[1:] = sorted(i[1:])
-    return dataCol
-
-def CombinOfProID(mstrList):
-    """
-    OVERVIEW:
-        This Function prints out the combinations of the output from SortDuplicates.
-        using data not outputed from sortedduplicates will most likely not return valid
-        output.
-    NOTES:
-        /Volumes/HDD/-Apps/projects_Python/ProteinConvergence2016/Resources/CombOutPut.txt
-    """
-
-    combOut = open("/Volumes/HDD/-Apps/projects_Python/ProteinConvergence2016/Resources/CombOutPut.txt", "w")
-    reg = mstrList[0][0]
-    mstL = []
-    tmpL = []
-    for i in mstrList:
-
-        if "DARG" in i[0] and i[0] != reg :
-            reg = i[0]
-            mstL.append(list(tmpL))
-            tmpL.clear()
-        tmpL.append(i[1:])
-        if "DARG" in i[0] and mstrList.index(i) == len(mstrList)-1:
-            reg = i[0]
-            mstL.append(list(tmpL))
-            tmpL.clear()
-    startN = 0
-    n = 0
-    for num in range(0,len(mstL)):
-
-        new_egg = zip(*mstL[num])
-        new_egg = ([x for x in tup if "-" not in x] for tup in new_egg)
-        combb = 1
-        for i in new_egg:
-            if len(i) != 0:
-                combb *= len(i)
-        print(mstrList[n][0], "  combs: " , combb)
-
-        """
-        This following code writes the output to a text file for further use in the analysis
-
-        new_egg = zip(*egg)
-        new_egg = ([x for x in tup if "-" not in x] for tup in new_egg)
-        each = [[]]
-        for l in new_egg:
-            neach = [x + [t] for t in l for x in each]
-            each = neach
-        for e in each:
-            print(e)
-
-        """
-
-        new_egg = zip(*mstL[num])
-        new_egg = ([x for x in tup if "-" not in x] for tup in new_egg)
-        combsCount = []
-        each = [[]]
-        combOut.write(str(mstrList[n][0]  + "  combs: " + str(combb) + "\n"))
-        n += 1
-        while n < len(mstrList) and "DARG" not in mstrList[n][0]:
-            n += 1
-
-        for l in new_egg:
-            neach = [x + [t] for t in l for x in each]
-            each = neach
-        for e in each:
-            combOut.write(str(str(each.index(e)) + "   " + str(e) + "\n"))
-    combOut.close()
-    return True
 
 def bioMuscleAlign(inputF, musclePath, outputF=""):
     """
@@ -1285,7 +1233,7 @@ def bioMuscleAlign(inputF, musclePath, outputF=""):
 def checkForAlignment(folder):
     """
     OVERVIEW: 
-        this function simply looks at alignment files in "folder" and checks for hyphens to see if any
+        this function looks at alignment files in "folder" and checks for hyphens to see if any
         files were/are not aligned.
     USE: 
         bioMuscleAlign ==> ( checkForAlignment )
