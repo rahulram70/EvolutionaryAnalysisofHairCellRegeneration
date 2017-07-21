@@ -59,17 +59,17 @@ def main():
     
     #  Assemble dictionary of proteins ids and sequences
     pr_out_D = {}
-    rng = 0
+    #rng = 0
     for key, value in mstL.items():
-        rng += 1
+        #rng += 1
         pr_out_L = []
         for pr_L in value:
             for pr in pr_L:
                 if (" " not in pr and "-" not in pr):
                     pr_out_L.append("{}".format(pr))
         pr_out_D[key] = pr_out_L
-        if rng == 5:
-            break
+        #if rng == 5:
+        #    break
     
     # -------------------------
     #  Make files to be aligned
