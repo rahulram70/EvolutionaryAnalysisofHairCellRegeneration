@@ -22,7 +22,9 @@ def main():
     out_file =  res_dir + "/resources/data-cleaned/"
     seq_dir = res_dir + "/resources/data-raw/protein-sequences/"
     temp_align_path = res_dir + "/resources/data-cleaned/transcript-alignments-all/"
+    mstL_file_path = res_dir + "/resources/mstL_dictionary.txt"
     res_dir += "/resources/data-raw/Current-transcript-ids/"
+    
 
     L = []
     spid = [i.split() for i in open(spid_path, "r").read().splitlines()]
@@ -39,8 +41,8 @@ def main():
 
     #  remove any duplicates and generate table of all ortholog proteins
     L = pc.comb_rm_dups(L, list(zip(*spid))[0], ident="DART")
-    
-
+    #print(L)
+    mstL_file = open(mstL_file_path, "w+")
     #  Assemble 2d lists for each transcript
     reg = L[0][0]
     mstL = {}
@@ -57,18 +59,38 @@ def main():
             mstL[ i[0] ] = list(tmpL)
             tmpL.clear()
     
-    
-    #  Assemble dictionary of proteins ids and sequences
-    pr_out_D = {}
-    rng = 0
+    #print(mstL)      
+    missing_pro_transIDs = []
+    multiple_pro_transIDs = []
+    for key in mstL:
+        count = 0
+        count_space = 0
+        for value in mstL[key]:
+            for element in value:
+                if(element[0:7] == "ENSDARP"):
+                    if(element[7:12] == "00000"):
+                        count += 1  
+                    elif(element[7:12] == "     "):
+                        count_space += 1
+                 
+            
+        if(count_space > 0 ):
+            missing_pro_transIDs.append(key)
+        if(count > 1):
+            multiple_pro_transIDs.append(key)
+        
+    print(missing_pro_transIDs)
+    print(len(multiple_pro_transIDs))
     for key, value in mstL.items():
-        rng += 1
-        pr_out_L = []
-        for pr_L in value:
-            for pr in pr_L:
-                if (" " not in pr and "-" not in pr):
-                    pr_out_L.append("{}".format(pr))
-        pr_out_D[key] = pr_out_L
-        if rng == 5:
-            break
+        mstL_file.write("{}\n".format(key))
+        for line in value:
+            mstL_file.write(str(line) + "\n")
     
+    mstL_file.close()
+        ''' mstL_file.write(i + "\n")
+        for j in mstL[i]:
+            for k in j:
+                mstL_file.write(k + "\n")
+ '''
+if(__name__ == '__main__'):
+    main()
