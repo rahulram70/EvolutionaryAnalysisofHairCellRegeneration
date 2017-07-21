@@ -24,11 +24,13 @@ def main():
     log_path = script_dir + "/log.csv"
     
     log = open(log_path, "w+")
-    log.write("Transcript, R count, NR count, R >= 0.5 Sim, NR >= 0.5 sim, Total species\n")
+    log.write("#,Transcript, R protein #, NR protein #, Total Proteins, \
+    R >= 0.5 Sim, NR >= 0.5 sim, R species #, NR species #\n")
+    c = 0
     for file in os.listdir(align_path):
         
         if ".fasta" in file:
-            
+            c += 1
             tr = file.split(".")[0] 
             tr_path = align_path + file
             print(tr)
@@ -39,23 +41,30 @@ def main():
             # get average similarity for R and NR groups
             spid_tb = pc.spid_tb_gen(spid_path)
             g_r = 0
+            spe_c_r = []
+            spe_c_nr = []
             g_r_c = 0
             g_nr = 0
             g_nr_c = 0
             thr = 0.5
+            
             for spe in L:
-                spe_gr = pc.spid_tb_get_group(spe[0], spid_tb)
                 
-                if spe_gr == "R":    
+                spe_gr = pc.spid_tb_get_group(spe[0], spid_tb)
+                if spe_gr == "R":   
+                    if spe[0][:6] not in spe_c_r:
+                        spe_c_r.append(spe[0][:6]) 
                     if spe[1] >= thr:
                         g_r += 1
                     g_r_c += 1
                 else:
+                    if spe[0][:6] not in spe_c_nr:
+                        spe_c_nr.append(spe[0][:6]) 
                     if spe[1] >= thr:
                         g_nr += 1
                     g_nr_c += 1
-            log.write( "{},{},{},{},{},{}\n".format(tr, g_r_c, g_nr_c, \
-                g_r, g_nr, g_r_c + g_nr_c) )
+            log.write( "{},{},{},{},{},{},{},{},{}\n".format(c, tr, g_r_c, \
+                g_nr_c, g_r_c + g_nr_c, g_r, g_nr, len(spe_c_r), len(spe_c_nr)) )
 
             #print( "R have {} >= {} and {} < {}   with {} species".format(g_r, thr, g_r_c-g_r, thr, g_r_c) )
             #print( "NR have {} >= {} and {} < {}   with {} species".format(g_nr, thr, g_nr_c-g_nr, thr, g_nr_c) )
