@@ -18,11 +18,12 @@ def main():
 
     # Setup paths to needed directories
     #
-    out_file =  res_dir + "/resources/data-cleaned/"
-    align_path = res_dir + "/resources/data-cleaned/transcript-alignments-all/"
+    unalign_path = res_dir + "/resources/data-cleaned/transcript-alignments-all/"
+    align_path = res_dir + "/resources/data-cleaned/transcript-alignments-aligned/"
+    muscle_path = res_dir + "/resources/muscle/muscle3.8.31_i86darwin64.31_i86darwin64"
     
 
-    pc.comp_for_similarity(align_path)
+    pc.bioMuscleAlign(unalign_path, muscle_path, align_path)
 
 
 
