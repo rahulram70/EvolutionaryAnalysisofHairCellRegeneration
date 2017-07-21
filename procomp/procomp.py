@@ -811,7 +811,7 @@ def comb_gen_combs(mstrList, spid, out_fl, thr_tr, ident, w=0, refac=1):
         for i in L:
             if spid_tb_get_group(i, tb) == gr:
                 if len(i) > longest:
-                longest = len(i)
+                    longest = len(i)
         return spe_id
 
     def _check_ens_spe(ens_id, spid_path):

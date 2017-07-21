@@ -44,6 +44,7 @@ def main():
     #  Assemble 2d lists for each transcript
     reg = L[0][0]
     mstL = {}
+
     tmpL = []
     for i in L:
         if "DART" in i[0] and i[0] != reg :
@@ -71,19 +72,3 @@ def main():
         if rng == 5:
             break
     
-    # -------------------------
-    #  Make files to be aligned
-    #
-
-    #  Generate Hashtable of sequences
-    seq_tb = pc.gen_seq_hash_tb(seq_dir)
-
-    for key, value in pr_out_D.items():
-        out_path = temp_align_path + key + ".fasta"
-        pc.list_to_fasta(value, seq_tb, out_path)
-        print("currently Making file for {}".format(key))
-    
-
-
-if __name__ == '__main__':
-    main()
