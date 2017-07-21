@@ -128,6 +128,47 @@ def spid_tb_get_group(spe_id, tb):
         print("ERROR: cannot find ({}) in given table".format(key))
         return None
 
+def gen_seq_hash_tb(l_seq_dir):
+    """ generates a 2d dictionary for the protein sequences """
+    seq_table = {}
+    for file in os.listdir(l_seq_dir):
+        if file.endswith(".txt"):
+            uafloc = l_seq_dir + file
+            tempF = open(uafloc, "r")
+            tempFText = tempF.read()
+            cur_sp_id =  tempFText.splitlines()[0].split()[0][1:7]
+            seq_table[cur_sp_id] = {}
+            for protein in tempFText.split(">"):
+                L = protein.split()
+                if len(L) == 2:
+                    seq_table[cur_sp_id][protein.split()[0]] = protein.split()[1]
+            
+            tempF.close()
+    return seq_table
+
+def get_seq(seq_id, tb):
+    """ returns the protein sequence for a given id """
+    try:
+        return tb[seq_id[:6]][seq_id]
+    except:
+        return -1
+
+def algn_tb_gen(algn_path):
+    """ This function takes an alignment file and generates
+    a list of species and their sequences in tuples with:
+    (spe_id, spe_seq) """
+    with open(algn_path , "r") as fl:
+        ret_val = []
+        for spe in fl.read().split(">"):
+            spe_lines = spe.splitlines()
+            if ( len(spe_lines) > 0):
+                spe_id = spe_lines[0]
+                spe_seq = ""
+                for line in spe_lines[1:]:
+                    spe_seq += line
+                ret_val.append( (spe_id, spe_seq) )
+        return ret_val
+
 # ////////////////////////////////////////////////////////////////
 # Core Functions    //////////////////////////////////////////////
 # ////////////////////////////////////////////////////////////////
@@ -259,6 +300,47 @@ def MainPC_analysis(hitstxt, outtxt):
     for i in outL:
         if ( int(i.split()[5][3:]) > 0 and int(i.split()[4][2:]) > 0):         #filter for output
             outputFile.write(i)
+
+def comp_for_similarity(in_fl, comparator):
+    """ takes an alignment file and compares each species for percent
+    similarity.
+    INPUTS:
+             in_fl = path to alignment file
+        comparator = string id of species to be compared with (i.e ENSDAR)
+        
+    """
+    
+    # setup list of tuples of species
+    algn_L = algn_tb_gen(in_fl)
+    
+    # get length of alignment (note: all alignments have the same length)
+    rng = len( algn_L[0][1] )
+
+    # get index for comparator species and generate log list for each species
+    cm_ind = 0
+    log = []
+    for i in range(len(algn_L)):
+        if "ENSDAR" in algn_L[i][0]:
+            cm_ind = i
+        log.append( [algn_L[i][0], 1] )
+            
+    
+    # compare each species to comparator seq and log
+    for pt in range(rng):
+        for spe in range(len(algn_L)):
+            
+            comp_spe = algn_L[cm_ind]
+            cur_spe = algn_L[spe]
+            
+            if (cur_spe[1][pt] == comp_spe[1][pt]):
+                #print( "{} :: {} == {} :: {}".format( cur_spe[0], \
+                # cur_spe[1][pt], comp_spe[1][pt], comp_spe[0]) )    
+                log[spe][1] += 1
+    
+    # divide all similarities by length of alignment
+    for spe in log:
+        spe[1] = round(spe[1]/rng, 3)
+    return log
 
 def SeqFuncDomain_Fast(alignPath="none", combinationPath="none", funcDomPath="none", outtxt=""):
     """
@@ -811,7 +893,7 @@ def comb_gen_combs(mstrList, spid, out_fl, thr_tr, ident, w=0, refac=1):
         for i in L:
             if spid_tb_get_group(i, tb) == gr:
                 if len(i) > longest:
-                longest = len(i)
+                    longest = len(i)
         return spe_id
 
     def _check_ens_spe(ens_id, spid_path):
@@ -950,35 +1032,10 @@ def comb_gen_pro_files(combfile, seq_dir, out_dir):
         comb_IdPr => comb_rm_dups => comb_gen_combs => bioMuscleAlign => MainProteinCompare
     """
 
-    def _gen_seq_hash_tb(l_seq_dir=seq_dir):
-        """ generates a 2d dictionary for the protein sequences """
-        seq_table = {}
-        for file in os.listdir(l_seq_dir):
-            if file.endswith(".txt"):
-                uafloc = seq_dir + file
-                tempF = open(uafloc, "r")
-                tempFText = tempF.read()
-                cur_sp_id =  tempFText.splitlines()[0].split()[0][1:7]
-                seq_table[cur_sp_id] = {}
-                for protein in tempFText.split(">"):
-                    L = protein.split()
-                    if len(L) == 2:
-                        seq_table[cur_sp_id][protein.split()[0]] = protein.split()[1]
-                
-                tempF.close()
-        return seq_table
-
-    def _get_seq(seq_id, tb):
-        """ returns the protein sequence for a given id """
-        try:
-            return tb[seq_id[:6]][seq_id]
-        except:
-            return -1
-
     # Set up hash table of species ids and sequences as well as open
     # combination files and set inital variables
     #
-    seq_tb = _gen_seq_hash_tb()
+    seq_tb = gen_seq_hash_tb(seq_dir)
     combfile = open(combfile, 'r').read().splitlines()  
     errorLog = []
     cur_comb = ""
@@ -1009,7 +1066,7 @@ def comb_gen_pro_files(combfile, seq_dir, out_dir):
             
             for sp in temp:
                 if len(sp) >= 7:
-                    seq = _get_seq(sp, seq_tb)
+                    seq = get_seq(sp, seq_tb)
                     if seq != -1:
                         outfile.write(">" + sp + "\n")
                         outfile.write(seq + "\n")
@@ -1196,8 +1253,25 @@ def DomainHits_analysis(dm_output_file):
             tophit = i[0]
     return 0
 
-
-
+def list_to_fasta(L, seq_tb, out_dir):
+    """ OVERVIEW: takes a list of protein ids and generates an unaligned sequence
+        file ready for alignment in the out_dir
+    INPUTS:
+        fl_name = name the output file will be saved as
+              L = list of protein ids
+         seq_tb = sequence table from gen_seq_hash_tb()
+        out_dir = path to location where output will be written """
+    
+    with open(out_dir, "w+") as out:
+        c = 0    
+        # iterate over all protein ids
+        for pr_id in L:
+            if (" " not in pr_id and "-" not in pr_id):
+                seq = get_seq(pr_id, seq_tb)
+                out.write(">{}\n".format(pr_id))
+                out.write(str(seq) + "\n")
+                c += 1
+    return "File ready for alignment with {} species".format(c)
 
 def bioMuscleAlign(inputF, musclePath, outputF=""):
     """
