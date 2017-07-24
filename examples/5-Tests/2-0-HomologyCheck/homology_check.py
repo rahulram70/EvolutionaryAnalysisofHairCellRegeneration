@@ -20,6 +20,7 @@ def main():
     #
     spid_path = res_dir + "/resources/Species-Group.txt"
     out_file =  res_dir + "/resources/data-cleaned/"
+    tr_id_dir = res_dir + "/resources/data-raw/Transcript-ids-cleaned/"
     seq_dir = res_dir + "/resources/data-raw/protein-sequences/"
     temp_align_path = res_dir + "/resources/data-cleaned/transcript-alignments-all/"
     res_dir += "/resources/data-raw/Current-transcript-ids/"
@@ -29,47 +30,35 @@ def main():
     print(spid)
 
     #  add all tr - pr associations to a list
-    for F in os.listdir(res_dir):
-        if ("." not in F and F != "Icon\r"):
-            ali_dir = res_dir + F + "/"
-            L += pc.comb_IdPr(ali_dir) 
+    L = pc.comb_IdPr(tr_id_dir)
     
     #  sort tr - pr associations by tr id.
     L = sorted(L)
 
     #  remove any duplicates and generate table of all ortholog proteins
     L = pc.comb_rm_dups(L, list(zip(*spid))[0], ident="DART")
-    
 
+    #with open(script_dir + "/rm_dups.txt", "w+") as out:
+    #    for i in L:
+    #        out.write(str(i) + "\n")
+
+    
     #  Assemble 2d lists for each transcript
-    reg = L[0][0]
-    mstL = {}
+    reg = "ENSDART00000000005"  
+    mst_D = {}
     tmpL = []
+    length = len(L)
     for i in L:
-        if "DART" in i[0] and i[0] != reg :
-            reg = i[0]
-            mstL[ i[0] ] = list(tmpL)
-            tmpL.clear()
-        tmpL.append(i[1:])
-        if "DART" in i[0] and L.index(i) == len(L)-1:
-            reg = i[0]
-            mstL[ i[0] ] = list(tmpL)
-            tmpL.clear()
-    
-    
-    #  Assemble dictionary of proteins ids and sequences
-    pr_out_D = {}
-    #rng = 0
-    for key, value in mstL.items():
-        #rng += 1
-        pr_out_L = []
-        for pr_L in value:
-            for pr in pr_L:
-                if (" " not in pr and "-" not in pr):
-                    pr_out_L.append("{}".format(pr))
-        pr_out_D[key] = pr_out_L
-        #if rng == 5:
-        #    break
+        for pid in i:
+            if "DART" in pid or (i == L[length-1] and i[-1] == pid): 
+                if pid != reg:
+                    mst_D[ reg ] = list(tmpL)
+                    reg = pid
+                    tmpL.clear()
+            elif "-" not in pid and " " not in pid:
+                tmpL.append(pid)
+
+    print(mst_D["ENSDART00000000564"])
     
     # -------------------------
     #  Make files to be aligned
@@ -78,12 +67,12 @@ def main():
     #  Generate Hashtable of sequences
     seq_tb = pc.gen_seq_hash_tb(seq_dir)
 
-    for key, value in pr_out_D.items():
-        out_path = temp_align_path + key + ".fasta"
-        pc.list_to_fasta(value, seq_tb, out_path)
-        print("currently Making file for {}".format(key))
+    for key, value in mst_D.items():
+        if key == "ENSDART00000174329":
+            out_path = temp_align_path + key + ".fasta"
+            pc.list_to_fasta(value, seq_tb, out_path)
+            print("currently Making file for {}".format(key)) 
+
     
-
-
 if __name__ == '__main__':
     main()

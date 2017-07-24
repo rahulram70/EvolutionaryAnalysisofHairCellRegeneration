@@ -25,7 +25,7 @@ def main():
     
     log = open(log_path, "w+")
     log.write("#,Transcript, R protein #, NR protein #, Total Proteins, \
-    R >= 0.5 Sim, NR >= 0.5 sim, R species #, NR species #\n")
+    R >= 0.5 Sim, NR >= 0.5 sim, median sim, R species #, NR species #\n")
     c = 0
     for file in os.listdir(align_path):
         
@@ -47,7 +47,9 @@ def main():
             g_nr = 0
             g_nr_c = 0
             thr = 0.5
-            
+            median_L = [i[1] for i in L]
+            median_L.sort()
+            median = median_L[ len(median_L)//2 ]
             for spe in L:
                 
                 spe_gr = pc.spid_tb_get_group(spe[0], spid_tb)
@@ -63,11 +65,8 @@ def main():
                     if spe[1] >= thr:
                         g_nr += 1
                     g_nr_c += 1
-            log.write( "{},{},{},{},{},{},{},{},{}\n".format(c, tr, g_r_c, \
-                g_nr_c, g_r_c + g_nr_c, g_r, g_nr, len(spe_c_r), len(spe_c_nr)) )
-
-            #print( "R have {} >= {} and {} < {}   with {} species".format(g_r, thr, g_r_c-g_r, thr, g_r_c) )
-            #print( "NR have {} >= {} and {} < {}   with {} species".format(g_nr, thr, g_nr_c-g_nr, thr, g_nr_c) )
+            log.write( "{},{},{},{},{},{},{},{},{},{}\n".format(c, tr, g_r_c, \
+                g_nr_c, g_r_c + g_nr_c, g_r, g_nr, median, len(spe_c_r), len(spe_c_nr)) )
 
 
 if __name__ == '__main__':

@@ -127,6 +127,7 @@ def spid_tb_get_group(spe_id, tb):
     except:
         print("ERROR: cannot find ({}) in given table".format(key))
         return None
+#def spid_tb_is_
 
 def gen_seq_hash_tb(l_seq_dir):
     """ generates a 2d dictionary for the protein sequences """
@@ -320,21 +321,17 @@ def comp_for_similarity(in_fl, comparator):
     cm_ind = 0
     log = []
     for i in range(len(algn_L)):
-        if "ENSDAR" in algn_L[i][0]:
+        if "ENSDARP0" in algn_L[i][0]:
             cm_ind = i
-        log.append( [algn_L[i][0], 1] )
-            
+        log.append( [algn_L[i][0], 1] )        
     
     # compare each species to comparator seq and log
     for pt in range(rng):
-        for spe in range(len(algn_L)):
-            
+        for spe in range(len(algn_L)):         
             comp_spe = algn_L[cm_ind]
             cur_spe = algn_L[spe]
             
-            if (cur_spe[1][pt] == comp_spe[1][pt]):
-                #print( "{} :: {} == {} :: {}".format( cur_spe[0], \
-                # cur_spe[1][pt], comp_spe[1][pt], comp_spe[0]) )    
+            if (cur_spe[1][pt] == comp_spe[1][pt]):  
                 log[spe][1] += 1
     
     # divide all similarities by length of alignment
@@ -796,19 +793,19 @@ def comb_IdPr(id_dir, name_filter="", print_computed=0):
                 print(file)
             fileloc = id_dir + file
             fileName = "" + file
-            fileString = open(fileloc, "r").read()
-            fileString_split = fileString.splitlines()
+            fileString = open(fileloc, "r")
+            fileString_split = fileString.read().splitlines()
             
             for line in fileString_split:
                 ln = line.split()
                 if len(ln) == 2:
                     if (len(ln[1]) != 18):
                         n = 18-len(ln[1]) 
-                        t = str(ln[1]) + "   "
-                        
+                        t = str(ln[1]) + "   "        
                     else:
                         t = ln[1]
                     tr_pr_L.append(str(ln[0] + "   " + t))
+            fileString.close()
     print("comb_TrPr() has finished")
     return tr_pr_L
 
@@ -850,6 +847,7 @@ def comb_rm_dups(tr_pr_L, names, ident):
 
     # add in spacers if certain speices dont show up in 
     # previous processing.
+    #spid_tb = spid_tb_gen(spid_path)
     for i in dataCol:
         for nme in names:
             if ''.join(i[1:]).find(nme) == -1:
@@ -857,7 +855,6 @@ def comb_rm_dups(tr_pr_L, names, ident):
                     i.append(nme + " "*spacer_cnt)
                 else:
                     i.append(nme + "-"*spacer_cnt)
-                    
 
         i[1:] = sorted(i[1:])
 
@@ -1282,8 +1279,7 @@ def bioMuscleAlign(inputF, musclePath, outputF=""):
         1. copy unaligned fasta (.fa) files to new folder
         2. use that folder path as inputF
         3. function will overwrite all .fa files with aligned seq's
-    """
-
+    
     if (outputF == ""):
         outputF = inputF
     else:
@@ -1293,12 +1289,12 @@ def bioMuscleAlign(inputF, musclePath, outputF=""):
             full_file_name = os.path.join(inputF, file_name)
             if (os.path.isfile(full_file_name)):
                 shutil.copy(full_file_name, outputF)
+    """
 
     # Run Alignment        
     muscExe = open(musclePath)
     for file in os.listdir(inputF):
         path = outputF + file
-        input_file = open(path)
         cline = MuscleCommandline(input=path, out=path)
         command = str(cline)
         command = command.replace("muscle", musclePath)
