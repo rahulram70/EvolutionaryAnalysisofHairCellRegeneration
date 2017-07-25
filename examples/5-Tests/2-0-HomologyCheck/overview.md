@@ -22,3 +22,6 @@ This experiment is broken down into 3 consecutive steps allowing for parts to be
 
 ## Results
 
+<b>July 24, 2017</b><br>
+All scripts are written, tested, and work correctly. for this computation the bottleneck lies in the align.py. this is due to the size of alignments, with files having 60 - 950 sequences to align per file (***950 being an extreme case that occurs about 2-5 times***). the estimated compute time for our entire data set is roughly 36 hours to align 9000 files of this size. further dataset cleaning is underway to eliminate transcripts without zebrafish protein ids as well as species within alignment files with sequences < 50% the length of the zebrafish sequence.
+

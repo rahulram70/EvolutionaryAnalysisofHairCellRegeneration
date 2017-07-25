@@ -27,8 +27,10 @@ def main():
     log.write("#,Transcript, R protein #, NR protein #, Total Proteins, \
     R >= 0.5 Sim, NR >= 0.5 sim, median sim, R species #, NR species #\n")
     c = 0
+    # get average similarity for R and NR groups
+    spid_tb = pc.spid_tb_gen(spid_path)
+
     for file in os.listdir(align_path):
-        
         if ".fasta" in file:
             c += 1
             tr = file.split(".")[0] 
@@ -38,8 +40,7 @@ def main():
             # generate log for percent similarity with zebrafish for transcript
             L = pc.comp_for_similarity(tr_path, "ENSDAR")
 
-            # get average similarity for R and NR groups
-            spid_tb = pc.spid_tb_gen(spid_path)
+
             g_r = 0
             spe_c_r = []
             spe_c_nr = []
