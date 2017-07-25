@@ -19,7 +19,6 @@ def merge(alist, blist, left, middle, right):
         count += 1
         tmpList.append("")
         tmpList2.append("")
-        
     
     index1 = left
     index2 = middle + 1
@@ -50,6 +49,7 @@ def merge(alist, blist, left, middle, right):
     for i in range(len(tmpList)):
         alist[left + i] = tmpList[i]
         blist[left + i] = tmpList2[i]
+
 def search(alist, srchVal):
     lb = 0
     ub = len(alist) - 1
@@ -82,7 +82,7 @@ def main():
     log_path = script_dir + "/log.csv"
     
     log = open(log_path, "w+")
-    log.write("Transcript ID, # R Species, # NR Species, Below 50% in zebrafish length, Above 50% in zebrafish length, error\n")
+    log.write("Transcript ID, # R Proteins, # NR Proteins, <50% to DARP length, >50% to DARP length, error\n")
 
     c = 0
     spid_tb = pc.spid_tb_gen(spid_path)
@@ -92,11 +92,9 @@ def main():
             c += 1
             tr = file.split(".")[0] 
             tr_path = align_path + file
-            #print(tr)
 
             # generate log for percent similarity with zebrafish for transcript
             #L = pc.comp_for_similarity(tr_path, "ENSDAR")
-
             # get average similarity for R and NR groups
             
             spec_pro_id_L = []
@@ -117,11 +115,8 @@ def main():
         
             for line in an_file:
                 if(line[0:4] == ">ENS"):
-                    
                     pro_id_L.append(line[1:8])
-                    spec_pro_id_L.append(line)
-                    
-                    
+                    spec_pro_id_L.append(line)         
                 else:
                     pro_seq_L.append(line)
                     spec_pro_id_L.append(line)
@@ -132,16 +127,16 @@ def main():
             zebrafish_index = search(pro_id_L, "ENSDARP")
             
             if(zebrafish_index != -1):
-                error = ""
+                error = "-"
                 zebrafish_len = len(pro_seq_L[zebrafish_index])
                 for line in spec_pro_id_L:
                     
                     if(line[0:4] == ">ENS"):
                         pro_id = line[1:]
-                        #print(pc.spid_tb_get_group(pro_id, spid_tb))
-                        if( pc.spid_tb_get_group(pro_id, spid_tb) ==  "R"):
+                        pr = pc.spid_tb_get_group(pro_id, spid_tb)
+                        if( pr ==  "R"):
                             regen_spec += 1
-                        elif(pc.spid_tb_get_group(pro_id, spid_tb) == "nr" or "NR"):
+                        elif(pr == "NR"):
                             non_regen_spc += 1
 
                     elif(len(line) >= zebrafish_len):
@@ -149,22 +144,19 @@ def main():
                     else:
                         lower += 1
             else:
-                error = "Does not contain zebrafish protein"
+                error = "No DARP"
                 for line in spec_pro_id_L:
                     if(line[0:4] == ">ENS"):
                                        
-                        if( pc.spid_tb_get_group(pro_id, spid_tb) == "r" or "R"):
+                        if( pc.spid_tb_get_group(pro_id, spid_tb) == "R"):
                             regen_spec += 1
-                        elif(pc.spid_tb_get_group(pro_id, spid_tb) == "nr" or "NR"):
+                        elif(pc.spid_tb_get_group(pro_id, spid_tb) == "NR"):
                             non_regen_spc += 1
 
-            log.write( "{},{},{},{},{},{}\n".format(file[:-6], " " + str(regen_spec), " " + str(non_regen_spc), " " + str(lower), " " +str(upper),  " " + error))
-            #break            
-            
-            
-
-
+            log.write( "{},{},{},{},{},{}\n".format(file[:-6], regen_spec, \
+                    non_regen_spc, lower, upper, error))
             
 
 if __name__ == '__main__': 
     main()
+

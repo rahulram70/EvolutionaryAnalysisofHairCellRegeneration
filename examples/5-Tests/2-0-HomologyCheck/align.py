@@ -3,6 +3,7 @@
 import os
 import sys
 
+print(__file__)
 
 def main():
     script_dir = os.path.dirname(os.path.abspath(__file__))
@@ -24,8 +25,6 @@ def main():
     
 
     pc.bioMuscleAlign(unalign_path, muscle_path, align_path)
-
-
 
 
 if __name__ == '__main__':
