@@ -64,6 +64,7 @@ def search(alist, srchVal):
     return -1
 
 def main():
+
     script_dir = os.path.dirname(os.path.abspath(__file__))
     res_dir = os.path.abspath(os.path.join(script_dir, os.pardir))
 
@@ -81,9 +82,13 @@ def main():
     spid_path = res_dir + "/resources/Species-Group.txt"
     log_path = script_dir + "/log.csv"
     
+    # threshold for comparison to 
+    threshold = 0.4
     log = open(log_path, "w+")
-    log.write("Transcript ID, # R Proteins, # NR Proteins, <50% to DARP length, >50% to DARP length, error\n")
 
+    log.write("Transcript ID, # R Proteins, # NR Proteins, <{}% to DARP length, \
+     >{}% to DARP length, error\n".format(threshold*100,threshold*100) )
+    
     c = 0
     spid_tb = pc.spid_tb_gen(spid_path)
     for file in os.listdir(align_path):
@@ -97,8 +102,7 @@ def main():
             #L = pc.comp_for_similarity(tr_path, "ENSDAR")
             # get average similarity for R and NR groups
             
-            spec_pro_id_L = []
-            
+            spec_pro_id_L = []  
             pro_seq_L = []
             pro_id_L = []
             regen_spec = 0
@@ -139,7 +143,7 @@ def main():
                         elif(pr == "NR"):
                             non_regen_spc += 1
 
-                    elif(len(line) >= zebrafish_len):
+                    elif(len(line) >= zebrafish_len*threshold):
                         upper += 1
                     else:
                         lower += 1

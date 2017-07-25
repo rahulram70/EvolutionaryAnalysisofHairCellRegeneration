@@ -40,7 +40,6 @@ def main():
             # generate log for percent similarity with zebrafish for transcript
             L = pc.comp_for_similarity(tr_path, "ENSDAR")
 
-
             g_r = 0
             spe_c_r = []
             spe_c_nr = []

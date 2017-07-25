@@ -17,21 +17,14 @@ def main():
 
     # Setup paths to needed directories
     #
-    in_dir = script_dir + "/post-align/"
-    out_dir = script_dir + "/pre-align/"
-    musl_path = res_dir + "/resources/muscle/muscle3.8.31_i86darwin64.31_i86darwin64"
+    in_fl = res_dir + "/resources/data-cleaned/aligned_seq/ENSDART00000000042_0 .txt"
 
-    # ---------------------------------
-    # original muscle align function
-    #
-    pc.bioMuscleAlign(in_dir, musl_path, out_dir)
+    out = pc.comp_cons_seq(in_fl)
+    print(out)
 
-    # ------------------------------
-    # New multithreading based alignments
-    #
-    
-
-    
     
 if __name__ == '__main__':
     main()
+
+
+

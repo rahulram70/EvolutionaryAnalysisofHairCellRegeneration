@@ -61,7 +61,7 @@ def main():
     seq_tb = pc.gen_seq_hash_tb(seq_dir)
 
     for key, value in mst_D.items():
-        out_path = temp_align_path + key + ".fasta"
+        out_path = temp_align_path + key + ".txt"
         pc.list_to_fasta(value, seq_tb, out_path)
         print("currently Making file for {}".format(key)) 
     
