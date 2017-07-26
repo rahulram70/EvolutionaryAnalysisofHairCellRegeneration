@@ -1316,15 +1316,12 @@ def bioMuscleAlign(inputF, musclePath, outputF=""):
             if (os.path.isfile(full_file_name)):
                 shutil.copy(full_file_name, outputF)
     
-
     # Run Alignment        
+    #
     muscExe = open(musclePath)
     for file in os.listdir(inputF):
         path = outputF + file
-        cline = MuscleCommandline(input=path, out=path)
-        command = str(cline)
-        command = command.replace("muscle", musclePath)
-        
+        command = "{} -in {} -out {}".format(musclePath, path, path)
         exit_status = os.system(command)
         print(exit_status)
         if exit_status == -1:

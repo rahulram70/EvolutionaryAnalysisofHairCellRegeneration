@@ -19,12 +19,12 @@ def main():
 
     # Setup paths to needed directories
     #
-    unalign_path = res_dir + "/resources/data-cleaned/transcript-alignments-all/"
-    align_path = res_dir + "/resources/data-cleaned/transcript-alignments-aligned/"
+    unalign_path = res_dir + "/examples/2-Process/5-optimize-biomusclealign/pre-align/"
+    align_path = res_dir + "/examples/2-Process/5-optimize-biomusclealign/post-align/"
     muscle_path = res_dir + "/resources/muscle/muscle3.8.31_i86darwin64.31_i86darwin64"
     
 
-    pc.bioMuscleAlign(unalign_path, muscle_path, align_path)
+    pc.bioMuscleAlign(align_path, muscle_path)
 
 
 if __name__ == '__main__':
