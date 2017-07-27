@@ -129,6 +129,7 @@ def spid_tb_get_group(spe_id, tb):
     except:
         print("ERROR: cannot find ({}) in given table".format(key))
         return None
+#def spid_tb_is_
 
 def gen_seq_hash_tb(l_seq_dir):
     """ generates a 2d dictionary for the protein sequences """
@@ -328,6 +329,7 @@ def comp_cons_seq(in_fl):
         del com
     return cons_seq
 
+
 def comp_for_similarity(in_fl, comparator):
     """ takes an alignment file and compares each species for percent
     similarity.
@@ -347,7 +349,7 @@ def comp_for_similarity(in_fl, comparator):
     cm_ind = 0
     log = []
     for i in range(len(algn_L)):
-        if comparator in algn_L[i][0]:
+        if "ENSDARP0" in algn_L[i][0]:
             cm_ind = i
         log.append( [algn_L[i][0], 1] )        
     
@@ -364,6 +366,38 @@ def comp_for_similarity(in_fl, comparator):
     for spe in log:
         spe[1] = round(spe[1]/rng, 3)
     return log
+
+def comp_for_length(in_fl, comparator, thr, out_fl=""):
+    """ Takes an pre-alignment file, threshold, and comparator
+        and compares all species with the comparator species
+        and removes the species with sequences below the threshold length."""
+    pre_algn_tb = algn_tb_gen(in_fl)
+    comparator_index = -1
+    comparator_length = 0
+    rem_proteins = []
+    if(out_fl != ""):
+        out_file = open(out_fl, "w+")
+    else:
+        out_file = open(in_fl , "w")
+    for index in range(len(pre_algn_tb)):
+        if(comparator in pre_algn_tb[index][0]):
+            comparator_index = index
+            break
+    if(comparator_index != -1):
+        comparator_length = len(pre_algn_tb[index][1])
+        for element in pre_algn_tb:
+            if(len(element[1]) >= thr * comparator_length):
+                out_file.write(">" + element[0] + "\n")
+                out_file.write(element[1] + "\n")
+            else:
+                rem_proteins.append(element[0])
+        return rem_proteins
+    else:
+        return "No DARP found"
+
+        
+
+    
 
 def SeqFuncDomain_Fast(alignPath="none", combinationPath="none", funcDomPath="none", outtxt=""):
     """
@@ -1297,7 +1331,7 @@ def list_to_fasta(L, seq_tb, out_dir):
     return "File ready for alignment with {} species".format(c)
 
 def bioMuscleAlign(inputF, musclePath, outputF=""):
-    """
+   """
     OVERVIEW: 
         returns aligned .fa files of the unaligned .fa files from "inputF" folder in the same
         folder using the MUSCLE algorithm for peptide alignment.
@@ -1317,15 +1351,12 @@ def bioMuscleAlign(inputF, musclePath, outputF=""):
             if (os.path.isfile(full_file_name)):
                 shutil.copy(full_file_name, outputF)
     
-
     # Run Alignment        
+    #
     muscExe = open(musclePath)
     for file in os.listdir(inputF):
         path = outputF + file
-        cline = MuscleCommandline(input=path, out=path)
-        command = str(cline)
-        command = command.replace("muscle", musclePath)
-        
+        command = "{} -in {} -out {}".format(musclePath, path, path)
         exit_status = os.system(command)
         print(exit_status)
         if exit_status == -1:
