@@ -16,7 +16,6 @@ def main():
 
     out_dir = res_dir + "/resources/data-cleaned/aligned_seq/"
     in_dir = res_dir + "/resources/data-cleaned/unaligned_seq/"
-
     mspath = res_dir + "/resources/muscle3.8.31_i86darwin64/muscle3.8.31_i86darwin64.31_i86darwin64"
     
 
