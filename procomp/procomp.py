@@ -1331,7 +1331,7 @@ def list_to_fasta(L, seq_tb, out_dir):
     return "File ready for alignment with {} species".format(c)
 
 def bioMuscleAlign(inputF, musclePath, outputF=""):
-   """
+    """
     OVERVIEW: 
         returns aligned .fa files of the unaligned .fa files from "inputF" folder in the same
         folder using the MUSCLE algorithm for peptide alignment.

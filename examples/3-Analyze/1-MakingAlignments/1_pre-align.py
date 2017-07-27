@@ -18,10 +18,10 @@ def main():
     # Setup paths to needed directories
     #
     spid_path = res_dir + "/resources/Species-Group.txt"
-    out_file =  res_dir + "/resources/data-cleaned/"
+    fil_path = script_dir + "/filtered/"
     tr_id_dir = res_dir + "/resources/data-raw/Transcript-ids-cleaned/"
     seq_dir = res_dir + "/resources/data-raw/protein-sequences/"
-    temp_align_path = res_dir + "/resources/data-cleaned/transcript-prealign/"
+    temp_align_path = script_dir + "/unalignedSeqs/" #res_dir + "/resources/data-cleaned/transcript-prealign/"
     res_dir += "/resources/data-raw/Current-transcript-ids/"
 
     L = []
@@ -51,18 +51,23 @@ def main():
             elif "-" not in pid and " " not in pid:
                 tmpL.append(pid)
     
-    for key, val in mst_D.items():
-        print("{}\n{}".format(key, val))
+    #for key, val in mst_D.items():
+    #    print("{}\n{}".format(key, val))
     # -------------------------
     #  Make files to be aligned
     #
 
     #  Generate Hashtable of sequences
     seq_tb = pc.gen_seq_hash_tb(seq_dir)
-
+    thr = 0.5
+    comparator = "DARP"
     for key, value in mst_D.items():
         out_path = temp_align_path + key + ".txt"
         pc.list_to_fasta(value, seq_tb, out_path)
+        log = pc.comp_for_length(out_path, comparator, thr, \
+          out_fl="{}{}.txt".format(fil_path, key))
+        print(i)
+            
         print("currently Making file for {}".format(key)) 
     
 if __name__ == '__main__':
