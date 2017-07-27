@@ -303,6 +303,31 @@ def MainPC_analysis(hitstxt, outtxt):
         if ( int(i.split()[5][3:]) > 0 and int(i.split()[4][2:]) > 0):         #filter for output
             outputFile.write(i)
 
+def comp_cons_seq(in_fl):
+    """Returns the conserved sequence for a post-alignment file where
+    conserved is defined as the most common amino acid at each site"""
+    
+    # setup list of tuples of species
+    algn_L = algn_tb_gen(in_fl)
+    
+    # get length of alignment (note: all alignments have the same length)
+    rng = len( algn_L[0][1] )
+    
+    # compare each species to get conserved sequence
+    cons_seq = ""
+    for pt in range(rng):
+        site_L = [ i[1][pt] for i in algn_L ]
+        print(site_L)
+        
+        com = ["",0]
+        for i in site_L:
+            if site_L.count(i) > com[1] and i != com[0]:
+                com[0] = i
+                com[1] = site_L.count(i)
+        cons_seq += com[0]
+        del com
+    return cons_seq
+
 def comp_for_similarity(in_fl, comparator):
     """ takes an alignment file and compares each species for percent
     similarity.
