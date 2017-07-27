@@ -3,6 +3,7 @@
 import os
 import sys
 
+
 def main():
     script_dir = os.path.dirname(os.path.abspath(__file__))
     res_dir = os.path.abspath(os.path.join(script_dir, os.pardir))
@@ -21,11 +22,12 @@ def main():
     out_file =  res_dir + "/resources/data-cleaned/"
     tr_id_dir = res_dir + "/resources/data-raw/Transcript-ids-cleaned/"
     seq_dir = res_dir + "/resources/data-raw/protein-sequences/"
-    temp_align_path = res_dir + "/resources/data-cleaned/transcript-prealign/"
+    temp_align_path = res_dir + "/resources/data-cleaned/transcript-regen-prealign/"
     res_dir += "/resources/data-raw/Current-transcript-ids/"
 
     L = []
     spid = [i.split() for i in open(spid_path, "r").read().splitlines()]
+    print(spid)
 
     #  add all tr - pr associations to a list
     L = pc.comb_IdPr(tr_id_dir)
@@ -35,24 +37,33 @@ def main():
 
     #  remove any duplicates and generate table of all ortholog proteins
     L = pc.comb_rm_dups(L, list(zip(*spid))[0], ident="DART")
-    
+
+    #with open(script_dir + "/rm_dups.txt", "w+") as out:
+    #    for i in L:
+    #        out.write(str(i) + "\n")
+
+    spid_tb = pc.spid_tb_gen(spid_path)
     #  Assemble 2d lists for each transcript
     reg = "ENSDART00000000005"  
     mst_D = {}
     tmpL = []
     length = len(L)
     for i in L:
+        #print(i)
         for pid in i:
+            #print(pid)
             if "DART" in pid or (i == L[length-1] and i[-1] == pid): 
                 if pid != reg:
                     mst_D[ reg ] = list(tmpL)
                     reg = pid
                     tmpL.clear()
             elif "-" not in pid and " " not in pid:
-                tmpL.append(pid)
+                if(pc.spid_tb_get_group(pid, spid_tb) == "R"):
+                    #print(pid)
+                    tmpL.append(pid)
+
+    print(mst_D["ENSDART00000000564"])
     
-    for key, val in mst_D.items():
-        print("{}\n{}".format(key, val))
     # -------------------------
     #  Make files to be aligned
     #
@@ -61,9 +72,10 @@ def main():
     seq_tb = pc.gen_seq_hash_tb(seq_dir)
 
     for key, value in mst_D.items():
-        out_path = temp_align_path + key + ".txt"
+        out_path = temp_align_path + key + ".fasta"
         pc.list_to_fasta(value, seq_tb, out_path)
         print("currently Making file for {}".format(key)) 
+ 
     
 if __name__ == '__main__':
     main()

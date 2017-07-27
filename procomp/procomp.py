@@ -127,6 +127,7 @@ def spid_tb_get_group(spe_id, tb):
     except:
         print("ERROR: cannot find ({}) in given table".format(key))
         return None
+#def spid_tb_is_
 
 def gen_seq_hash_tb(l_seq_dir):
     """ generates a 2d dictionary for the protein sequences """
@@ -301,33 +302,8 @@ def MainPC_analysis(hitstxt, outtxt):
         if ( int(i.split()[5][3:]) > 0 and int(i.split()[4][2:]) > 0):         #filter for output
             outputFile.write(i)
 
-def comp_cons_seq(in_fl):
-    """Returns the conserved sequence for a post-alignment file where
-    conserved is defined as the most common amino acid at each site"""
-    
-    # setup list of tuples of species
-    algn_L = algn_tb_gen(in_fl)
-    
-    # get length of alignment (note: all alignments have the same length)
-    rng = len( algn_L[0][1] )
-    
-    # compare each species to get conserved sequence
-    cons_seq = ""
-    for pt in range(rng):
-        site_L = [ i[1][pt] for i in algn_L ]
-        print(site_L)
-        
-        com = ["",0]
-        for i in site_L:
-            if site_L.count(i) > com[1] and i != com[0]:
-                com[0] = i
-                com[1] = site_L.count(i)
-        cons_seq += com[0]
-        del com
-    return cons_seq
-    
 def comp_for_similarity(in_fl, comparator):
-    """ takes an post-alignment file and compares each species for percent
+    """ takes an alignment file and compares each species for percent
     similarity.
     INPUTS:
              in_fl = path to alignment file
@@ -345,7 +321,7 @@ def comp_for_similarity(in_fl, comparator):
     cm_ind = 0
     log = []
     for i in range(len(algn_L)):
-        if comparator in algn_L[i][0]:
+        if "ENSDARP0" in algn_L[i][0]:
             cm_ind = i
         log.append( [algn_L[i][0], 1] )        
     
@@ -362,6 +338,38 @@ def comp_for_similarity(in_fl, comparator):
     for spe in log:
         spe[1] = round(spe[1]/rng, 3)
     return log
+
+def comp_for_length(in_fl, comparator, thr, out_fl=""):
+    """ Takes an pre-alignment file, threshold, and comparator
+        and compares all species with the comparator species
+        and removes the species with sequences below the threshold length."""
+    pre_algn_tb = algn_tb_gen(in_fl)
+    comparator_index = -1
+    comparator_length = 0
+    rem_proteins = []
+    if(out_fl != ""):
+        out_file = open(out_fl, "w+")
+    else:
+        out_file = open(in_fl , "w")
+    for index in range(len(pre_algn_tb)):
+        if(comparator in pre_algn_tb[index][0]):
+            comparator_index = index
+            break
+    if(comparator_index != -1):
+        comparator_length = len(pre_algn_tb[index][1])
+        for element in pre_algn_tb:
+            if(len(element[1]) >= thr * comparator_length):
+                out_file.write(">" + element[0] + "\n")
+                out_file.write(element[1] + "\n")
+            else:
+                rem_proteins.append(element[0])
+        return rem_proteins
+    else:
+        return "No DARP found"
+
+        
+
+    
 
 def SeqFuncDomain_Fast(alignPath="none", combinationPath="none", funcDomPath="none", outtxt=""):
     """
@@ -1294,7 +1302,6 @@ def list_to_fasta(L, seq_tb, out_dir):
                 c += 1
     return "File ready for alignment with {} species".format(c)
 
-@stats
 def bioMuscleAlign(inputF, musclePath, outputF=""):
     """
     OVERVIEW: 
@@ -1304,9 +1311,8 @@ def bioMuscleAlign(inputF, musclePath, outputF=""):
         1. copy unaligned fasta (.fa) files to new folder
         2. use that folder path as inputF
         3. function will overwrite all .fa files with aligned seq's
-    """
-
-    if (outputF == "" or outputF == inputF):
+    
+    if (outputF == ""):
         outputF = inputF
     else:
     # Copy files from source folder to output folder
@@ -1315,20 +1321,16 @@ def bioMuscleAlign(inputF, musclePath, outputF=""):
             full_file_name = os.path.join(inputF, file_name)
             if (os.path.isfile(full_file_name)):
                 shutil.copy(full_file_name, outputF)
-    
+    """
+
     # Run Alignment        
-    #
     muscExe = open(musclePath)
     for file in os.listdir(inputF):
         path = outputF + file
-        command = "{} -in {} -out {}".format(musclePath, path, path)
-        exit_status = os.system(command)
-        print(exit_status)
-        if exit_status == -1:
-            print( "ERROR: could not run command\n---> {}".format(command) )
-            return -1
-        else:
-            print("finished aligning {}".format(file))
+        cline = MuscleCommandline(input=path, out=path)
+        command = str(cline)
+        command = command.replace("muscle", musclePath)
+        os.system(command)
 
 def checkForAlignment(folder):
     """
