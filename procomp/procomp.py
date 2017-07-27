@@ -1303,7 +1303,7 @@ def list_to_fasta(L, seq_tb, out_dir):
     return "File ready for alignment with {} species".format(c)
 
 def bioMuscleAlign(inputF, musclePath, outputF=""):
-    """
+   """
     OVERVIEW: 
         returns aligned .fa files of the unaligned .fa files from "inputF" folder in the same
         folder using the MUSCLE algorithm for peptide alignment.
@@ -1311,8 +1311,9 @@ def bioMuscleAlign(inputF, musclePath, outputF=""):
         1. copy unaligned fasta (.fa) files to new folder
         2. use that folder path as inputF
         3. function will overwrite all .fa files with aligned seq's
-    
-    if (outputF == ""):
+    """
+
+    if (outputF == "" or outputF == inputF):
         outputF = inputF
     else:
     # Copy files from source folder to output folder
@@ -1321,16 +1322,20 @@ def bioMuscleAlign(inputF, musclePath, outputF=""):
             full_file_name = os.path.join(inputF, file_name)
             if (os.path.isfile(full_file_name)):
                 shutil.copy(full_file_name, outputF)
-    """
-
+    
     # Run Alignment        
+    #
     muscExe = open(musclePath)
     for file in os.listdir(inputF):
         path = outputF + file
-        cline = MuscleCommandline(input=path, out=path)
-        command = str(cline)
-        command = command.replace("muscle", musclePath)
-        os.system(command)
+        command = "{} -in {} -out {}".format(musclePath, path, path)
+        exit_status = os.system(command)
+        print(exit_status)
+        if exit_status == -1:
+            print( "ERROR: could not run command\n---> {}".format(command) )
+            return -1
+        else:
+            print("finished aligning {}".format(file))
 
 def checkForAlignment(folder):
     """
