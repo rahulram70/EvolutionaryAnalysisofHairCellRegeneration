@@ -19,3 +19,16 @@ behind the project progression.
         - before computing combinations, align regenerators and non-regenerators seperately to identify a conserved sequence for each group by finding proteins with >70% similarity in the filter alignment stage.
     - Solution 2
         - if the alignment filter stage does not significantly reduce the number of combinations for a specific transcript further refactoring methods must be considered which will be discussed at a later point.
+        
+### August 1, 2017
+- Project meeting to discuss how to handle combinations and analysis. Robby, Alli, Phil, Rahul, and Matt Lambert in attendance.
+- Need to measure how many genes we are dealing with. Take transcript list and convert to gene ids
+- Ways to widdle down combinations
+    - Preferred way is to go with the longest sequence for each species and transcript header making it a one to one
+    - 40% sequence homology is too stringent for vertebrates 
+    - Determine whats a truncated protein to elminate some noise?
+- Recreating ancestral sequences for analysis 
+    - Create ancestral sequences for fish, (birds + reptiles), and mammals using PAML. 
+        - For mammals consider excluding monotremes
+- Use Amazon webservices for PAML or other process intensive computations
+- Consider analyzing gene duplicates that are conserved in the regenerator but different or lost in the non-regenerators.
