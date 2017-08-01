@@ -22,7 +22,7 @@ def main():
     out_dir = script_dir + "/post-align/"
     in_dir1 = script_dir + "/pre_align1/"
     in_dir2 = script_dir + "/pre_align2/"
-    in_dir = script_dir + "/pre-align/"
+    in_dir = res_dir + "/resources/data-cleaned/transcript-longest-prealign/"
     musl_path = res_dir + "/resources/muscle/muscle3.8.31_i86win32.exe"
     inputL = []
     # ---------------------------------
