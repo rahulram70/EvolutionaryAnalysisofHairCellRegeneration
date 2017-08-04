@@ -32,3 +32,23 @@ behind the project progression.
         - For mammals consider excluding monotremes
 - Use Amazon webservices for PAML or other process intensive computations
 - Consider analyzing gene duplicates that are conserved in the regenerator but different or lost in the non-regenerators.
+
+### August 2, 2017
+- Project meeting to discuss ortholog approach. Robby, Matt, and Phil in attendance.
+- New strategy to obtain sequences and determine orthologs.
+    - Use NCBI's database (allows for reciprocal blast determination of orthologs and more diverse species).
+    - Obtain zebrafish sequences associated with every gene from RNA seq papers.
+    - Keep only longest zebrafish protein sequence for each gene id.
+    - Blast those sequences (blastp) and obtain best hit for species list that Phil will select.
+        - Choose well annotated species with broad distrubution across species phylogeny (ideally scaffolds=chromosomes).
+        - Should there be a threshold for the blast (Either the first or the reciprocal)?
+    - Then take those sequences and blast them back to zebrafish.
+        - If the blast back to zebrafish does not yield the orginal query sequence then no ture ortholog exists for that pair.
+        - This result will yield at most 1 sequence per species per gene id.
+- Discussed analysis methods.
+    - Analyze avergae number of acceptable amino acid substitutions per site (regens vs. non).
+    - Stringent positive selection vs. relaxation of seleciton.
+    - PAML analysis.
+        - Control file is analogous to config file.
+        - Need to create a gene tree for each gene.
+        - Not great to analyze alot of genes because the nodes where inferred ancestral sequence are need to be manaually selected.
