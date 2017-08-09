@@ -117,7 +117,7 @@ def spid_tb_gen(spid_path):
         table[species] = group
     return table
 
-def spid_tb_get_group(spe_id, tb):
+def spid_tb_get_group(spe_id, tb)
     """ Returns the group a particular species is associated with """
     key = spe_id[:7]
     if key[-1] == "T":
@@ -129,7 +129,6 @@ def spid_tb_get_group(spe_id, tb):
     except:
         print("ERROR: cannot find ({}) in given table".format(key))
         return None
-#def spid_tb_is_
 
 def gen_seq_hash_tb(l_seq_dir):
     """ generates a 2d dictionary for the protein sequences """
@@ -393,11 +392,7 @@ def comp_for_length(in_fl, comparator, thr, out_fl=""):
                 rem_proteins.append(element[0])
         return rem_proteins
     else:
-        return "No DARP found"
-
-        
-
-    
+        return "No DARP found"  
 
 def SeqFuncDomain_Fast(alignPath="none", combinationPath="none", funcDomPath="none", outtxt=""):
     """
@@ -1330,7 +1325,7 @@ def list_to_fasta(L, seq_tb, out_dir):
                 c += 1
     return "File ready for alignment with {} species".format(c)
 
-def bioMuscleAlign(inputF, musclePath, outputF=""):
+def bioMuscleAlign(inputF, musclePath, outputF="", quiet=0):
     """
     OVERVIEW: 
         returns aligned .fa files of the unaligned .fa files from "inputF" folder in the same
@@ -1356,7 +1351,10 @@ def bioMuscleAlign(inputF, musclePath, outputF=""):
     muscExe = open(musclePath)
     for file in os.listdir(inputF):
         path = outputF + file
-        command = "{} -in {} -out {}".format(musclePath, path, path)
+        if quiet:
+            command = "{} -in {} -out {} -quiet".format(musclePath, path, path)
+        else:
+            command = "{} -in {} -out {}".format(musclePath, path, path)
         exit_status = os.system(command)
         print(exit_status)
         if exit_status == -1:

@@ -7,6 +7,68 @@ from Bio import SeqIO
 from Bio.Blast import NCBIWWW
 from Bio.Blast import NCBIXML
 
+#
+# Setup blast results object
+#
+class blast_res:
+    def __init__(self, accession="", score=0, seq_len="", seq="", pos="", \
+        quer="", subj="", e_val="", gaps="", org_query="", gene=""):
+        self.accession = accession
+        self.score = score
+        self.seq_len = seq_len
+        self.seq = seq
+        self.pos = pos
+        self.quer = quer
+        self.org_query = org_query
+        self.subj = subj
+        self.e_val = e_val   
+        self.gaps = gaps    
+        self.gene = gene
+    
+    def __str__(self):
+        ret_val = "ACC_ID: {}\nScore: {}\nSeq_Length: {}\nPositives: {}\nE_value: {}\nGaps: {}\nQuery: {}\n".format(self.accession, \
+        self.score, self.seq_len, self.pos,self.e_val, self.gaps, self.quer)
+        return ret_val
+
+    def get_stats(self):
+        ident = "ident: {}/{} ({}%)".format(len(self.seq), self.seq_len, \
+            len(self.seq)/self.seq_len*100)
+        positive = "Positives: {}/{} ({}%)".format(self.pos, self.seq_len, \
+            self.pos/self.seq_len*100)
+        gap = "Gaps: {}/{} ({}%)".format(self.gaps, self.seq_len, \
+            self.gaps/self.seq_len*100)
+        return {"ident": ident, "positive": positive, "gaps": gap}
+
+    def query_cover(self):
+        return len(self.subj)/len(self.quer)
+
+    def stat(self):
+        algn = len(self.seq)/self.seq_len*100
+        ret_val = algn * self.org_query * self.query_cover()
+        ret_val /= algn
+        return ret_val
+    
+def parse_b_recs_algns(b_rec, thr):
+    #
+    # Parse out results
+    #
+    res_L = []
+    for alignment in b_rec:
+        for hsp in alignment.hsps:
+            if hsp.expect < thr:
+                
+                # define variables from title line
+                title_L = alignment.title.split("|")
+                for i in title_L:
+                    if "NP_" in i or "XP_" in i:
+                        acc = i
+                        break
+                res = blast_res(accession=acc, score=int(hsp.score), seq_len=alignment.length, \
+                  subj=hsp.sbjct, quer=hsp.query, e_val=hsp.expect, gaps=hsp.gaps, \
+                  pos=hsp.positives)
+                res_L.append(res)
+    return res_L
+
 def main():
     """
     This script blasts each protien sequence from those downloaded in 
@@ -28,35 +90,9 @@ def main():
     pl_fl = script_dir + "/gather_domain_info.pl"
     genes_path = res_dir + "/resources/data-raw/gene_names.txt"
     gene_out = res_dir + "/resources/data-raw/gene_list.txt"
+    ncbi_xlsx = res_dir + "/resources/data-raw-ncbi/NCBI_Species_list.xlsx"
     res_dir += "/resources/data-raw/protein-sequences/"
     
-    #
-    # Setup blast results object
-    #
-    class blast_res:
-        def __init__(self, accession, score, seq_len, seq, pos, quer, e_val, gaps):
-            self.accession = accession
-            self.score = score
-            self.seq_len = seq_len
-            self.seq = seq
-            self.pos = pos
-            self.quer = quer
-            self.e_val = e_val   
-            self.gaps = gaps    
-        
-        def __str__(self):
-            ret_val = "{}\n{}\n{}\n{}\n{}\n{}\n{}\n".format(self.accession, \
-            self.score, self.seq_len, self.pos, self.quer, self.e_val, self.gaps)
-            return ret_val
-
-        def get_stats(self):
-            ident = "ident: {}/{} ({}%)".format(len(self.seq), self.seq_len, \
-                len(self.seq)/self.seq_len*100)
-            positive = "Positives: {}/{} ({}%)".format(self.pos, self.seq_len, \
-                self.pos/self.seq_len*100)
-            gap = "Gaps: {}/{} ({}%)".format(self.gaps, self.seq_len, \
-                self.gaps/self.seq_len*100)
-            return {"ident": ident, "positive": positive, "gaps": gap}
 
 
     # 
@@ -64,33 +100,51 @@ def main():
     #   
     #
     filter_str = "gallus gallus[ORGN]"
-    seq = "NP_001315469.1"
-    test = blast_res("new guy", 3, 5, 5, "j", 6, 8)
-    print(test)
-    """
+    org_seq = "NP_001315469.1"
     E_VALUE_THRESH = 0.04
+    res_L = []
     
-    result_handle = NCBIWWW.qblast("blastp", "nr", seq, entrez_query=filter_str)
+    #
+    # FIRST Blast 
+    #
+    result_handle = NCBIWWW.qblast("blastp", "nr", org_seq, entrez_query=filter_str)
     blast_records = NCBIXML.read(result_handle)
 
+    #
+    # Parse out results
+    #
+    res_L = parse_b_recs_algns(blast_records.alignments, E_VALUE_THRESH)
 
-    for alignment in blast_records.alignments:
-        for hsp in alignment.hsps:
-            if hsp.expect < E_VALUE_THRESH:
-                print('****Alignment****')
-                print('sequence:', alignment.title)
-                print('Score:', hsp.score)
-                print('ident:', hsp.identities)
-                print('query:', hsp.query)
-                print('length:', alignment.length)
-                print('e value:', hsp.expect, "\n")
-                
-                #print(hsp.query[0:75] + '...')
-                #print(hsp.match[0:75] + '...')
-                #print(hsp.sbjct[0:75] + '...')
+    # Get protein with highest score
+    #
+    best = res_L[0]
+    for i in res_L:
+        print("acc=({}) score=({})".format(i.accession, i.score))
+        if i.score > best.score:
+            best = i
+    print("BEST")
+    print("acc=({}) score=({})".format(best.accession, best.score))
     
-
-    """
-
+    #
+    # Perform Reciprocal Blast
+    #
+    filter_str = "Danio rerio[ORGN]"
+    result_handle = NCBIWWW.qblast("blastp", "nr", best.accession, entrez_query=filter_str)
+    blast_records = NCBIXML.read(result_handle)
+    
+    #
+    # Parse out results
+    #
+    del(res_L)
+    res_L = parse_b_recs_algns(blast_records.alignments, E_VALUE_THRESH)
+    
+    # Check results for original Danio rerio protein
+    #
+    for i in res_L:
+        print("acc=({}) score=({})".format(i.accession, i.score))
+        if i.accession == org_seq:
+            print("An ortholog has been found!!!")
+            print(i)
+    
 if __name__ == '__main__':
     main()
