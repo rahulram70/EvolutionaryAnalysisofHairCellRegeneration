@@ -78,6 +78,7 @@ def main():
     paralogs.
     """
 
+    E_VALUE_THRESH = 0.04
     script_dir = os.path.dirname(os.path.abspath(__file__))
     res_dir = os.path.abspath(os.path.join(script_dir, os.pardir))
 
@@ -91,17 +92,16 @@ def main():
     genes_path = res_dir + "/resources/data-raw/gene_names.txt"
     gene_out = res_dir + "/resources/data-raw/gene_list.txt"
     ncbi_xlsx = res_dir + "/resources/data-raw-ncbi/NCBI_Species_list.xlsx"
-    res_dir += "/resources/data-raw/protein-sequences/"
+    dan_rer_proteins = res_dir + "/resources/data-raw-ncbi/danio_rerio_proteins.txt"
+    #res_dir += "/resources/data-raw/protein-sequences/"
     
 
-
+    
     # 
     # Perform a Blast of the identified sequence
     #   
-    #
     filter_str = "gallus gallus[ORGN]"
     org_seq = "NP_001315469.1"
-    E_VALUE_THRESH = 0.04
     res_L = []
     
     #
