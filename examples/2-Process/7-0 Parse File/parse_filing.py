@@ -49,19 +49,19 @@ def main():
     #print(inputL)
     #pc.bioMuscleAlignList(inputL, musl_path, out_dir)
 
-    print(pc.gen_query_list(filePath))
+    #print(pc.gen_query_list(filePath))
 
-    # full_file_name = ""
-    # output_file = ""
-    # for file in os.listdir(blast_dir):
-    #     #print("Creating " + file)
-    #     full_file_name = blast_dir + file
-    #     output_file = output + file.split(".")[0] + ".fasta"
-    #     print(full_file_name + " " + output_file)
-    #     #pc.gen_pro_files(full_file_name, output_file)
+    full_file_name = ""
+    output_file = ""
+    for file in os.listdir(blast_dir):
+        #print("Creating " + file)
+        full_file_name = blast_dir + file
+        output_file = output + file.split(".")[0] + ".fasta"
+        #print(full_file_name + " " + output_file)
+        pc.gen_pro_files(full_file_name, output_file)
         
-        #print("Finish " + file)
-    #pc.gen_pro_files()
+        print("Finish " + file)
+    
     
 if __name__ == '__main__':
     main()
