@@ -14,14 +14,6 @@ import pandas
 from Bio.Align.Applications import MuscleCommandline
 from Bio import AlignIO
 from io import StringIO as strIO
-
-<<<<<<< HEAD
-=======
-
-# ////////////////////////////////////////////////////////////////
-# Utility Functions //////////////////////////////////////////////
-# ////////////////////////////////////////////////////////////////
->>>>>>> 71f02af3b3fb28a7b68cdbcd5d13a1fe8157870b
     
 def SortProtein(alignmentfile, outputfile, orderCmdList):
     """
