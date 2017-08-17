@@ -2,6 +2,7 @@
 
 import os
 import sys
+import time
 
 def main():
     script_dir = os.path.dirname(os.path.abspath(__file__))
@@ -11,18 +12,15 @@ def main():
     for i in range(2):
         res_dir = os.path.abspath(os.path.join(res_dir, os.pardir))
 
+    # add project to path and import package
+    sys.path.append(res_dir)
+    import procomp as pc
+
     # Setup paths to needed directories
     #
-    pl_fl = script_dir + "/gather_domain_info.pl"
-    res_dir += "/resources/data-raw/protein-sequences/"
+    
+    filePath = res_dir + "/resources/data-raw NCBI/NCBI_Species_list.xlsx"
 
-    #  add all tr - pr associations to a list
-    for file in os.listdir(res_dir):
-        if (".txt" in file):
-            prg = "perl {}".format(pl_fl)
-            command = "{} '{}' &".format(prg, file)
-            print(command)
-            os.system(command)
-
+    print(pc.gen_dataframe(filePath))    
 if __name__ == '__main__':
     main()

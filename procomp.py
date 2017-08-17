@@ -10,11 +10,18 @@ import time
 from time import gmtime, strftime
 import threading
 import time
-
+import pandas
 from Bio.Align.Applications import MuscleCommandline
 from Bio import AlignIO
 from io import StringIO as strIO
 
+<<<<<<< HEAD
+=======
+
+# ////////////////////////////////////////////////////////////////
+# Utility Functions //////////////////////////////////////////////
+# ////////////////////////////////////////////////////////////////
+>>>>>>> 71f02af3b3fb28a7b68cdbcd5d13a1fe8157870b
     
 def SortProtein(alignmentfile, outputfile, orderCmdList):
     """
@@ -114,7 +121,7 @@ def spid_tb_gen(spid_path):
         table[species] = group
     return table
 
-def spid_tb_get_group(spe_id, tb)
+def spid_tb_get_group(spe_id, tb):
     """ Returns the group a particular species is associated with """
     key = spe_id[:7]
     if key[-1] == "T":
@@ -846,3 +853,146 @@ def checkForAlignment(folder):
                 else:
                     print(fileName, " is not aligned.!!!")
 
+def gen_dataframe(filePath):
+    excel_file = pandas.read_excel(filePath)  
+    #df = pandas.DataFrame(excel_file)
+    #row_len = excel_file.iloc[0][1]
+    species_list = []
+    sec_keys = []
+    hash_tb = {}
+    outer_hash_tb = {}
+    for i in range(len(excel_file.columns)):
+        sec_keys.append(excel_file.iloc[0][i])
+    
+    row = 0
+    #print(sec_keys)
+    for i in range(len(excel_file.index)):
+        spec = str(excel_file.iloc[i][2])
+        #print(spec)
+        if(i != 0 and spec not in species_list):
+            species_list.append(spec)
+            col = 0
+            #print(spec)
+            hash_tb[spec] = {}
+            for element in sec_keys:
+
+                if(element != "Species"):
+                    #print(element)
+                    #print(excel_file.loc[row][col])
+                    hash_tb[spec][element] = excel_file.loc[row][col]
+                    #outer_hash_tb[spec] = inner_hash_tb 
+                col += 1
+        row += 1 
+    return hash_tb
+
+def parse_file(filePath):
+    ''' Creates a hashtable based on data from the blast files.
+
+    '''
+
+    # for i in range(row_len):
+    #     spec = excel_file.iloc[i:2]
+    #     if(spec not in species_list):
+    #         species_list.append(spec)
+    
+    blast_file = open(filePath, "r")       
+    hash_tb = {}
+    spec_id = ""
+    res_spec_id = ""
+    res_spec_score = ""
+    res_spec_expect = ""
+    res_spec_method = ""
+    res_spec_ident = ""
+    res_spec_pos = ""
+    res_spec_gaps = ""
+    res_pro_seq = ""
+    
+
+    #hash_tb[spec_id] = {}
+    found = 0
+    for line in blast_file:
+        if("Query=" in line):
+            #print(line)
+            spec_id = line.split()[1]
+            
+            found += 1
+        
+        elif(">" in line):
+            res_spec_id = line.split()[0]
+            res_pro_seq = ""
+            found += 1
+        
+        
+        elif("Score =" in line):
+            res_spec_score = line.split(",")[0].split("=")[1]
+            res_spec_expect = line.split(",")[1].split("=")[1]
+            res_spec_method = line.split(",")[2].split(":")[1]
+            found += 1
+            
+        elif("Identities =" in line):
+            res_spec_ident = line.split(",")[0].split("=")[1]
+            res_spec_pos = line.split(",")[1].split("=")[1]
+            res_spec_gaps = line.split(",")[2].split("=")[1]
+            found += 1
+        
+        elif("Sbjct" in line):
+            res_pro_seq += line.split()[2].replace("-", "")
+        
+
+        else:
+            continue
+            
+        hash_tb[spec_id] = {}
+        hash_tb[spec_id]["Result"] = res_spec_id
+        hash_tb[spec_id]["Score"] = res_spec_score
+        hash_tb[spec_id]["Expect"] = res_spec_expect
+        hash_tb[spec_id]["Method"] = res_spec_method[:-1]
+        hash_tb[spec_id]["Identities"] = res_spec_ident
+        hash_tb[spec_id]["Positives"] = res_spec_pos
+        hash_tb[spec_id]["Gaps"] = res_spec_gaps[:-1]
+        hash_tb[spec_id]["Sequence"] = res_pro_seq
+            
+            # spec_id = ""
+            # res_spec_id = ""
+            # res_spec_score = ""
+            # res_spec_expect = ""
+            # res_spec_method = ""
+            # res_spec_ident = ""
+            # res_spec_pos = ""
+            # res_spec_gaps = ""
+            
+
+    return hash_tb
+
+def gen_pro_list(filePath):
+
+    hash_tb = parse_file(filePath)
+    pro_list = []
+
+    for key, value in hash_tb.items():
+        #spec_id = key
+        #print(key)
+        pro_id_and_seq = []
+        for inner_key, inner_value in value.items():
+            if("Result" in inner_key):
+                
+                pro_id_and_seq.append(inner_value)
+            
+            elif('Sequence' in inner_key):
+                pro_id_and_seq.append(inner_value)
+            
+            pro_list.append(pro_id_and_seq)
+    
+    return pro_list
+
+def gen_pro_files(filePath, out_dir):
+    
+    pro_list = gen_pro_list(filePath)
+    #pro_seq_file = open(filePath, "r")
+    output_file = open(out_dir, "w+")
+    
+    for pair in pro_list:
+        for element in pair:
+            output_file.write(element +"\n")
+ 
+    
