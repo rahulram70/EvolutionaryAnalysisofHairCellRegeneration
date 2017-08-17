@@ -48,7 +48,7 @@ def main():
     #print(inputL)
     #pc.bioMuscleAlignList(inputL, musl_path, out_dir)
 
-    pc.gen_pro_files(filePath,output)
+    print(pc.gen_query_list(filePath))
 
     
 if __name__ == '__main__':

@@ -1529,6 +1529,18 @@ def gen_pro_list(filePath):
     
     return pro_list
 
+def gen_query_list(filePath):
+    hash_tb = parse_file(filePath)
+    query_list = []
+
+    for key, value in hash_tb.items():
+
+        if(key not in query_list):    
+            query_list.append(key)
+    
+    return query_list
+        
+
 def gen_pro_files(filePath, out_dir):
     
     pro_list = gen_pro_list(filePath)
@@ -1538,5 +1550,17 @@ def gen_pro_files(filePath, out_dir):
     for pair in pro_list:
         for element in pair:
             output_file.write(element +"\n")
- 
+
+def blast_check(filePath_ZF_X, filePath_X_ZF):
+    pro_id_and_seq = gen_pro_list(filePath_ZF_X)
+    query_list = gen_query_list(filePath_X_ZF)
+    non_hit_pro = []
+
+    for pair in pro_id_and_seq:
+        for element in pair:
+            if(element[0] not in query_list):
+                non_hit_pro.append(element[0])
+
+    return non_hit_pro
+
     
