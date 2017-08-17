@@ -19,8 +19,9 @@ def main():
     # Setup paths to needed directories
     #
     
-    filePath = res_dir + "/resources/data-raw NCBI/BlastResults-ZF-to-X/ZF_vs_gallus.bls"
-    output = res_dir + "/resources/data-raw NCBI/pro-seq/gallus gallus.fasta"
+    blast_dir = res_dir + "/resources/data-raw NCBI/BlastResults-ZF-to-X/"
+    output = res_dir + "/resources/data-raw NCBI/Blast-Result-Reciprocals/"
+    filePath = blast_dir + "ZF_vs_pse_hum.bls"
     inputL = []
     # ---------------------------------
     # original muscle align function
@@ -50,6 +51,17 @@ def main():
 
     print(pc.gen_query_list(filePath))
 
+    # full_file_name = ""
+    # output_file = ""
+    # for file in os.listdir(blast_dir):
+    #     #print("Creating " + file)
+    #     full_file_name = blast_dir + file
+    #     output_file = output + file.split(".")[0] + ".fasta"
+    #     print(full_file_name + " " + output_file)
+    #     #pc.gen_pro_files(full_file_name, output_file)
+        
+        #print("Finish " + file)
+    #pc.gen_pro_files()
     
 if __name__ == '__main__':
     main()
