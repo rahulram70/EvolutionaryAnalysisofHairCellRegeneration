@@ -19,8 +19,8 @@ def main():
     # Setup paths to needed directories
     #
     
-    blast_dir = res_dir + "/resources/data-raw NCBI/BlastResults-ZF-to-X/"
-    output = res_dir + "/resources/data-raw NCBI/Blast-Result-Reciprocals/"
+    blast_dir = res_dir + "/resources/data-raw-ncbi/BlastResults-ZF-to-X/"
+    output = res_dir + "/resources/data-raw-ncbi/Blast-Result-Reciprocals/"
     filePath = blast_dir + "ZF_vs_pse_hum.bls"
     inputL = []
     # ---------------------------------
@@ -65,3 +65,4 @@ def main():
     
 if __name__ == '__main__':
     main()
+    

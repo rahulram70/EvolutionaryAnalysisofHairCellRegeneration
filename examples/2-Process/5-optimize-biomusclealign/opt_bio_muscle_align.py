@@ -18,7 +18,6 @@ def main():
 
     # Setup paths to needed directories
     #
-    
     out_dir = script_dir + "/post-align/"
     in_dir1 = script_dir + "/pre_align1/"
     in_dir2 = script_dir + "/pre_align2/"
@@ -51,10 +50,14 @@ def main():
     #print(inputL)
     #pc.bioMuscleAlignList(inputL, musl_path, out_dir)
 
-    threadL = pc.thread_creator(in_dir, 10, out_dir, musl_path)
+    #threadL = pc.thread_creator(in_dir, 5, out_dir, musl_path)
+    for i in range(thread_count):
+        obj = pc.myThread(
+        threadL.append()
 
     for obj in threadL:
         obj.start()
     
 if __name__ == '__main__':
     main()
+
