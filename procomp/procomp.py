@@ -5,6 +5,7 @@
 __name__ = "Procomp Analysis Module"
 
 import os
+import codecs
 import shutil
 import time
 from time import gmtime, strftime
@@ -1562,17 +1563,21 @@ def bioMuscleAlign(inputF, musclePath, outputF="", quiet=0):
     muscExe = open(musclePath)
     for file in os.listdir(inputF):
         path = outputF + file
-        if quiet:
-            command = "{} -in {} -out {} -quiet".format(musclePath, path, path)
-        else:
-            command = "{} -in {} -out {}".format(musclePath, path, path)
-        exit_status = os.system(command)
-        print(exit_status)
-        if exit_status == -1:
-            print( "ERROR: could not run command\n---> {}".format(command) )
-            return -1
-        else:
-            print("finished aligning {}".format(file))
+        test = open(path, "r")
+        test_rd = test.read()
+        if "-" not in test_rd: 
+            if quiet:
+                command = "{} -in {} -out {} -quiet".format(musclePath, path, path)
+            else:
+                command = "{} -in {} -out {}".format(musclePath, path, path)
+            exit_status = os.system(command)
+            print(exit_status)
+            if exit_status == -1:
+                print( "ERROR: could not run command\n---> {}".format(command) )
+                return -1
+            else:
+                print("finished aligning {}".format(file))
+        test.close()
 
 def bioMuscleAlignList(inputL, musclePath, outputF, quiet=0):
     """
@@ -1730,7 +1735,8 @@ def parse_file(filePath):
     #     if(spec not in species_list):
     #         species_list.append(spec)
     
-    blast_file = open(filePath, "r")       
+    blast_file = codecs.open(filePath, "r",encoding='utf-8', errors='ignore')
+    #blast_file = open(filePath, "r")     
     hash_tb = {}
     spec_id = ""
     res_spec_id = ""
@@ -1745,7 +1751,7 @@ def parse_file(filePath):
 
     #hash_tb[spec_id] = {}
     found = 0
-    for line in blast_file:
+    for line in blast_file: #.splitlines()
         if("Query=" in line):
             #print(line)
             spec_id = line.split()[1]
@@ -1772,11 +1778,7 @@ def parse_file(filePath):
         
         elif("Sbjct" in line):
             res_pro_seq += line.split()[2].replace("-", "")
-        
 
-        else:
-            continue
-            
         hash_tb[spec_id] = {}
         hash_tb[spec_id]["Result"] = res_spec_id
         hash_tb[spec_id]["Score"] = res_spec_score
@@ -1786,15 +1788,15 @@ def parse_file(filePath):
         hash_tb[spec_id]["Positives"] = res_spec_pos
         hash_tb[spec_id]["Gaps"] = res_spec_gaps[:-1]
         hash_tb[spec_id]["Sequence"] = res_pro_seq
-            
-            # spec_id = ""
-            # res_spec_id = ""
-            # res_spec_score = ""
-            # res_spec_expect = ""
-            # res_spec_method = ""
-            # res_spec_ident = ""
-            # res_spec_pos = ""
-            # res_spec_gaps = ""
+       
+        # spec_id = ""
+        # res_spec_id = ""
+        # res_spec_score = ""
+        # res_spec_expect = ""
+        # res_spec_method = ""
+        # res_spec_ident = ""
+        # res_spec_pos = ""
+        # res_spec_gaps = ""
             
     #print(hash_tb)
     return hash_tb
@@ -1837,11 +1839,12 @@ def gen_pro_files(filePath, out_dir):
     
     pro_list = gen_pro_list(filePath)
     #pro_seq_file = open(filePath, "r")
-    output_file = open(out_dir, "w+")
+    output_file = open(out_dir, "w")
     
     for pair in pro_list:
         for element in pair:
-            output_file.write(element +"\n")
+            if len(element) > 1:
+                output_file.write(element +"\n")
 
 def blast_check(filePath_ZF_X, filePath_X_ZF):
     pro_id_and_seq = gen_pro_list(filePath_ZF_X)
