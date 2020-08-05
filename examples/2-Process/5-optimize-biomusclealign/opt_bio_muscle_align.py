@@ -5,6 +5,7 @@ import sys
 import time
 
 def main():
+    print("test")
     script_dir = os.path.dirname(os.path.abspath(__file__))
     res_dir = os.path.abspath(os.path.join(script_dir, os.pardir))
 
@@ -24,16 +25,21 @@ def main():
     in_dir = res_dir + "/resources/data-cleaned/transcript-longest-prealign/"
     musl_path = res_dir + "/resources/muscle/muscle3.8.31_i86win32.exe"
     inputL = []
-    # ---------------------------------
-    # original muscle align function
-    #
-    # start = time.time()
-    # pc.bioMuscleAlign(in_dir, musl_path, outputF=out_dir)
-    # end = time.time()
-    # print(end - start)
-    # # # ------------------------------
+    # print(out_dir)
+    # print(in_dir1)
+    # print(in_dir2)
+    # print(in_dir)
+    # print(muscl_path)
+    # # ---------------------------------
+    original muscle align function
+    
+    start = time.time()
+    pc.bioMuscleAlign(in_dir, musl_path, outputF=out_dir)
+    end = time.time()
+    print(end - start)
+    # # ------------------------------
     # New multithreading based alignments
-    #
+    
     # start = time.time()
     # thread1 = pc.myThread(in_dir1, musl_path, outputF=out_dir)    
     # thread2 = pc.myThread(in_dir2, musl_path, outputF=out_dir)
@@ -47,16 +53,16 @@ def main():
     #     full_file_name = in_dir1 + file_name
     #     inputL.append(full_file_name)
     
-    #print(inputL)
-    #pc.bioMuscleAlignList(inputL, musl_path, out_dir)
+    # print(inputL)
+    # pc.bioMuscleAlignList(inputL, musl_path, out_dir)
 
-    #threadL = pc.thread_creator(in_dir, 5, out_dir, musl_path)
-    for i in range(thread_count):
-        obj = pc.myThread(
-        threadL.append()
+    # threadL = pc.thread_creator(in_dir, 5, out_dir, musl_path)
+    # # for i in range(thread_count):
+    #     obj = pc.myThread()
+    #     threadL.append()
 
-    for obj in threadL:
-        obj.start()
+    # for obj in threadL:
+    #     obj.start()
     
 if __name__ == '__main__':
     main()

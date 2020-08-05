@@ -13,5 +13,5 @@ Undergraduate and Lead Software Engineer<br>
 <robby.boney@wsu.edu>
 
 <b>Rahul Ram</b><br>
-Highschool Intern and software engineer focussing in bioinformatics<br>
+Highschool Intern and software engineer focusing in bioinformatics<br>
 <rahulram70@gmail.com> 

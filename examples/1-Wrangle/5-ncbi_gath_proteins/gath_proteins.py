@@ -28,6 +28,7 @@ def main():
     
     # Open Necessary files & setup variables
     #
+    print(gene_output_path)
     genes = open(genes_path, "r")
     genes_L = genes.read().splitlines()
     genes.close()

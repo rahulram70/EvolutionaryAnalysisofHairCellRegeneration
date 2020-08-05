@@ -49,4 +49,8 @@ for further information refer to the official github repo
 
 <strong>Developer:</strong> Robby Boney     <robby.boney@wsu.edu>
 
+<strong>Developer:</strong> Rahul Ram
+<rahulram70@gmail.com>
+
+
                     
